@@ -25,6 +25,7 @@ import { TransactionsTable } from './components/TransactionsTable';
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [dateFilter, setDateFilter] = useState('mes');
+  const [selectedMonth, setSelectedMonth] = useState(new Date(2024, 2, 1)); // March 2024
 
   return (
     <div className="flex h-screen overflow-hidden bg-[var(--color-main-bg)] selection:bg-[var(--color-accent)] selection:text-white">
@@ -36,7 +37,7 @@ function App() {
         <div className="flex-1 p-4 md:p-8 pt-4 max-w-7xl mx-auto w-full">
           {activeTab === 'gastos' && (
             <>
-              <PageHeader />
+              <PageHeader title="Gastos" selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} />
 
               {/* Top Row: Stat Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 mt-6">
@@ -93,11 +94,7 @@ function App() {
 
           {activeTab === 'ingresos' && (
             <>
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
-                <div className="flex items-center space-x-4 mb-4 sm:mb-0">
-                  <h2 className="text-3xl font-bold text-white tracking-tight">Ingresos</h2>
-                </div>
-              </div>
+              <PageHeader title="Ingresos" selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} />
               {/* Top Row: Stat Cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                 <IncomeStatCard
