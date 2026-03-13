@@ -5,7 +5,7 @@ import {
     TrendingDown,
     Target,
     BarChart2,
-    Settings
+    CreditCard
 } from 'lucide-react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -28,11 +28,10 @@ export function Sidebar({ activeTab, onChangeTab }) {
                 <div className="p-6 flex flex-col space-y-1 mt-2">
                     <div className="flex items-center space-x-3 text-white">
                         <div className="bg-blue-500 p-2 rounded-xl text-white">
-                            <LayoutDashboard size={20} />
+                            <CreditCard size={20} />
                         </div>
                         <h1 className="text-xl font-bold tracking-tight">Mi Finanzas</h1>
                     </div>
-                    <p className="text-slate-400 text-sm ml-[3.25rem]">Plan Premium</p>
                 </div>
 
                 <nav className="mt-6 px-4 space-y-2">
@@ -60,13 +59,13 @@ export function Sidebar({ activeTab, onChangeTab }) {
                 </nav>
             </div>
 
-            <div className="p-4">
-                <button
-                    className="w-full flex items-center space-x-3 px-4 py-3 rounded-xl text-slate-400 hover:bg-[var(--color-card-bg)] hover:text-white transition-all duration-200 ease-in-out group"
-                >
-                    <Settings size={20} className="text-slate-400 group-hover:text-white transition-colors" />
-                    <span className="font-medium text-[15px]">Configuración</span>
-                </button>
+            <div className="p-6 border-t border-[var(--color-border-dark)]/50">
+                <div className="flex items-center space-x-3 group cursor-pointer transition-all duration-200">
+                    <div className="w-9 h-9 rounded-full bg-slate-800 border border-[var(--color-border-dark)] flex items-center justify-center shadow-sm group-hover:border-blue-500/50 transition-all">
+                        <span className="text-xs font-bold text-slate-300">E</span>
+                    </div>
+                    <span className="font-semibold text-slate-400 group-hover:text-white transition-colors">Edison</span>
+                </div>
             </div>
         </aside>
     );
