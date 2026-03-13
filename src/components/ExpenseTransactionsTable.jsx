@@ -1,42 +1,7 @@
 import React from 'react';
 import { Download } from 'lucide-react';
 
-const transactions = [
-    {
-        id: 1,
-        date: '15 Mar 2024',
-        category: 'Comida',
-        description: 'Supermercado Metro',
-        amount: 120,
-        type: 'Gasto'
-    },
-    {
-        id: 2,
-        date: '14 Mar 2024',
-        category: 'Transporte',
-        description: 'Uber al trabajo',
-        amount: 35.50,
-        type: 'Gasto'
-    },
-    {
-        id: 3,
-        date: '12 Mar 2024',
-        category: 'Servicios',
-        description: 'Pago de luz',
-        amount: 145,
-        type: 'Gasto'
-    },
-    {
-        id: 4,
-        date: '10 Mar 2024',
-        category: 'Comida',
-        description: 'Restaurante Central',
-        amount: 250,
-        type: 'Gasto'
-    },
-];
-
-export function ExpenseTransactionsTable() {
+export function ExpenseTransactionsTable({ transactions = [] }) {
     return (
         <div className="bg-[var(--color-card-bg)] rounded-2xl border border-[var(--color-border-dark)] overflow-hidden shadow-sm">
             <div className="p-6 border-b border-[var(--color-border-dark)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">

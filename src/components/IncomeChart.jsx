@@ -2,21 +2,12 @@ import React, { useState } from 'react';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { cn } from './Sidebar';
 
-const data = [
-    { name: 'ENE', value: 300 },
-    { name: '', value: 600 },
-    { name: 'FEB', value: 800 },
-    { name: '', value: 900 },
-    { name: 'MAR', value: 950 },
-    { name: '', value: 1200 },
-    { name: 'ABR', value: 1600 },
-    { name: '', value: 2400 },
-    { name: 'MAY', value: 1800 },
-    { name: '', value: 1300 },
-    { name: 'JUN', value: 2500 }
-];
+export function IncomeChart({ data: rawData = [] }) {
+    const data = rawData.slice(-7).map(item => ({
+        name: item.date ? new Date(item.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : '',
+        value: parseFloat(item.amount) || 0
+    }));
 
-export function IncomeChart() {
     const [activeFilter, setActiveFilter] = useState('ESTE MES');
 
     return (
@@ -45,7 +36,7 @@ export function IncomeChart() {
                 </div>
 
                 <div className="text-right">
-                    <p className="text-2xl font-bold text-white tracking-tight">S/ 1,800</p>
+                    <p className="text-2xl font-bold text-white tracking-tight">S/ {data.reduce((sum, item) => sum + item.value, 0).toLocaleString()}</p>
                     <p className="text-sm text-green-500 font-medium">+15% vs prev.</p>
                 </div>
             </div>

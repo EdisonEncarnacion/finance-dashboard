@@ -2,19 +2,12 @@ import React, { useState } from 'react';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { cn } from './Sidebar';
 
-const data = [
-    { name: '1 Mar', value: 200 },
-    { name: '', value: 210 },
-    { name: '7 Mar', value: 250 },
-    { name: '', value: 400 },
-    { name: '14 Mar', value: 480 },
-    { name: '', value: 350 },
-    { name: '21 Mar', value: 500 },
-    { name: '', value: 450 },
-    { name: '28 Mar', value: 300 }
-];
+export function ExpenseChart({ data: rawData = [] }) {
+    const data = rawData.slice(-7).map(item => ({
+        name: item.date ? new Date(item.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : '',
+        value: parseFloat(item.amount) || 0
+    }));
 
-export function ExpenseChart() {
     const [activeFilter, setActiveFilter] = useState('ESTE MES');
 
     return (

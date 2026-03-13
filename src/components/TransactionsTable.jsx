@@ -16,7 +16,9 @@ const categoryColors = {
     'Transporte': 'bg-orange-500/20 text-orange-400',
 };
 
-export function TransactionsTable() {
+export function TransactionsTable({ transactions: propTransactions }) {
+    const displayTransactions = propTransactions || transactions;
+
     return (
         <div className="bg-[var(--color-card-bg)] rounded-3xl p-6 border border-[var(--color-border-dark)] shadow-sm col-span-1 md:col-span-2 flex flex-col">
             <div className="flex justify-between items-center mb-6">
@@ -38,10 +40,10 @@ export function TransactionsTable() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-border-dark)]/30">
-                        {transactions.map((tx) => (
+                        {displayTransactions.map((tx) => (
                             <tr key={tx.id} className="hover:bg-white/5 transition-colors group">
                                 <td className="py-4 px-2 text-sm text-slate-300 font-medium whitespace-nowrap">
-                                    {tx.date}
+                                    {tx.date ? new Date(tx.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : tx.date}
                                 </td>
                                 <td className="py-4 px-2">
                                     <span className={cn(
@@ -52,18 +54,18 @@ export function TransactionsTable() {
                                     </span>
                                 </td>
                                 <td className="py-4 px-2 text-sm text-white font-medium">
-                                    {tx.desc}
+                                    {tx.desc || tx.description}
                                 </td>
                                 <td className="py-4 px-2 text-sm text-white font-bold whitespace-nowrap">
-                                    {tx.amount}
+                                    {typeof tx.amount === 'number' ? `S/ ${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : tx.amount}
                                 </td>
                                 <td className="py-4 px-2 text-right">
                                     <div className={cn(
                                         "inline-flex items-center space-x-1 text-xs font-black uppercase tracking-widest",
-                                        tx.type === 'ingreso' ? "text-emerald-400" : "text-orange-400"
+                                        tx.type === 'ingreso' || tx.type === 'income' ? "text-emerald-400" : "text-orange-400"
                                     )}>
-                                        {tx.type === 'ingreso' ? <ArrowUpRight size={14} strokeWidth={3} /> : <ArrowDownRight size={14} strokeWidth={3} />}
-                                        <span>{tx.type}</span>
+                                        {tx.type === 'ingreso' || tx.type === 'income' ? <ArrowUpRight size={14} strokeWidth={3} /> : <ArrowDownRight size={14} strokeWidth={3} />}
+                                        <span>{tx.type === 'income' ? 'ingreso' : (tx.type === 'expense' ? 'gasto' : tx.type)}</span>
                                     </div>
                                 </td>
                             </tr>

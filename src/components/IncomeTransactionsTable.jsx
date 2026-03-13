@@ -1,33 +1,6 @@
 import React from 'react';
 
-const transactions = [
-    {
-        id: 1,
-        date: '15 Mar 2024',
-        source: 'Salario',
-        description: 'Pago mensual de nómina',
-        amount: 1500,
-        type: 'Ingreso'
-    },
-    {
-        id: 2,
-        date: '10 Mar 2024',
-        source: 'Freelance',
-        description: 'Diseño UI Dashboard',
-        amount: 200,
-        type: 'Ingreso'
-    },
-    {
-        id: 3,
-        date: '05 Mar 2024',
-        source: 'Bonos',
-        description: 'Bono por puntualidad',
-        amount: 100,
-        type: 'Ingreso'
-    }
-];
-
-export function IncomeTransactionsTable() {
+export function IncomeTransactionsTable({ transactions = [] }) {
     return (
         <div className="bg-[var(--color-card-bg)] rounded-2xl border border-[var(--color-border-dark)] overflow-hidden hover:border-slate-500 transition-colors group">
             <div className="p-6 border-b border-[var(--color-border-dark)] flex justify-between items-center relative z-10">
@@ -68,6 +41,11 @@ export function IncomeTransactionsTable() {
                 </table>
             </div>
 
+            {transactions.length === 0 && (
+                <div className="p-8 text-center text-slate-400">
+                    No hay transacciones de ingresos recientes.
+                </div>
+            )}
             <div className="absolute top-0 right-0 w-64 h-64 bg-slate-800/20 rounded-full blur-3xl group-hover:bg-slate-800/30 transition-colors pointer-events-none -z-0"></div>
         </div>
     );

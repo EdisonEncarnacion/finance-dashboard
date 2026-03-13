@@ -1,7 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 
-export function SavingsProgress({ dateFilter = 'mes' }) {
+export function SavingsProgress({ dateFilter = 'mes', current, goal }) {
     const savingsData = {
         hoy: { current: 35, goal: 33 },
         semana: { current: 270, goal: 230 },
@@ -9,8 +9,8 @@ export function SavingsProgress({ dateFilter = 'mes' }) {
         año: { current: 13800, goal: 12000 },
     };
 
-    const currentSavings = savingsData[dateFilter].current;
-    const savingsGoal = savingsData[dateFilter].goal;
+    const currentSavings = current !== undefined ? current : savingsData[dateFilter].current;
+    const savingsGoal = goal !== undefined ? goal : savingsData[dateFilter].goal;
 
     const progressPercentage = Math.round((currentSavings / savingsGoal) * 100);
     const cappedProgress = Math.min(progressPercentage, 100);

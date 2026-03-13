@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Plus, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { TransactionModal } from './TransactionModal';
 
-export function PageHeader({ title, selectedMonth, setSelectedMonth }) {
+export function PageHeader({ title, selectedMonth, setSelectedMonth, onSuccess }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [viewDate, setViewDate] = useState(new Date(selectedMonth));
@@ -148,6 +148,7 @@ export function PageHeader({ title, selectedMonth, setSelectedMonth }) {
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 type={isGastos ? 'expense' : 'income'}
+                onSuccess={onSuccess}
             />
         </>
     );

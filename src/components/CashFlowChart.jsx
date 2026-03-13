@@ -43,8 +43,8 @@ const chartData = {
     ]
 };
 
-export function CashFlowChart({ dateFilter = 'mes' }) {
-    const data = chartData[dateFilter];
+export function CashFlowChart({ dateFilter = 'mes', data: propData }) {
+    const data = propData !== undefined ? propData : chartData[dateFilter];
 
     return (
         <div className="bg-[var(--color-card-bg)] rounded-3xl p-6 border border-[var(--color-border-dark)] shadow-sm hover:shadow-xl transition-shadow col-span-1 md:col-span-2 flex flex-col relative overflow-hidden group h-full">

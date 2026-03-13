@@ -36,9 +36,10 @@ const cardData = {
     }
 }
 
-export function StatCard({ type, dateFilter = 'mes' }) {
+export function StatCard({ type, dateFilter = 'mes', value }) {
     const { icon: Icon, color, bg } = icons[type];
-    const { title, amount, trend, trendUp } = cardData[dateFilter][type];
+    const { title, amount: mockAmount, trend, trendUp } = cardData[dateFilter][type];
+    const amount = value !== undefined ? value : mockAmount;
 
     return (
         <div className="bg-[var(--color-card-bg)] rounded-3xl p-6 border border-[var(--color-border-dark)] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">

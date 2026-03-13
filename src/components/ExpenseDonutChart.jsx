@@ -1,13 +1,23 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
-const data = [
-    { name: 'Comida', value: 45, color: '#EF4444' }, // Red
-    { name: 'Transporte', value: 25, color: '#3B82F6' }, // Blue
-    { name: 'Servicios', value: 15, color: '#F59E0B' }, // Yellow
-];
+export function ExpenseDonutChart({ data: rawData = [] }) {
+    const totalAmount = rawData.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
 
-export function ExpenseDonutChart() {
+    // Group by category
+    const categoriesMap = rawData.reduce((acc, item) => {
+        const cat = item.category || 'Otros';
+        acc[cat] = (acc[cat] || 0) + (parseFloat(item.amount) || 0);
+        return acc;
+    }, {});
+
+    const colors = ['#EF4444', '#3B82F6', '#F59E0B', '#10B981', '#8B5CF6'];
+    const data = Object.keys(categoriesMap).map((name, index) => ({
+        name,
+        value: totalAmount > 0 ? Math.round((categoriesMap[name] / totalAmount) * 100) : 0,
+        amount: categoriesMap[name],
+        color: colors[index % colors.length]
+    }));
     return (
         <div className="bg-[var(--color-card-bg)] p-6 rounded-2xl border border-[var(--color-border-dark)] h-full flex flex-col relative overflow-hidden group hover:border-slate-500 transition-colors">
             <div className="mb-2">
@@ -50,7 +60,7 @@ export function ExpenseDonutChart() {
                 {/* Center text */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none -mt-4">
                     <span className="text-xs text-slate-400 font-semibold tracking-wider">TOTAL</span>
-                    <span className="text-2xl font-bold text-white tracking-tight mt-1">S/ 650</span>
+                    <span className="text-2xl font-bold text-white tracking-tight mt-1">S/ {totalAmount.toLocaleString()}</span>
                 </div>
             </div>
 

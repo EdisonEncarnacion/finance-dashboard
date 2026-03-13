@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { X, Calendar, DollarSign, Tag, FileText, ChevronDown } from 'lucide-react';
+import { createExpense, createIncome } from '../api/api';
+import { useToast } from '../context/ToastContext';
 
-export function TransactionModal({ isOpen, onClose, type }) {
+export function TransactionModal({ isOpen, onClose, type, onSuccess }) {
+    const { showToast } = useToast();
     const isExpense = type === 'expense';
     const title = isExpense ? 'Nuevo gasto' : 'Nuevo ingreso';
     const primaryButtonColor = isExpense
@@ -138,10 +141,26 @@ export function TransactionModal({ isOpen, onClose, type }) {
                             </button>
                             <button
                                 type="submit"
-                                onClick={(e) => {
+                                onClick={async (e) => {
                                     e.preventDefault();
-                                    // Handle logic here
-                                    onClose();
+                                    try {
+                                        const data = {
+                                            ...formData,
+                                            amount: parseFloat(formData.amount) || 0
+                                        };
+                                        let newRecord;
+                                        if (isExpense) {
+                                            newRecord = await createExpense(data);
+                                            showToast("Expense saved successfully");
+                                        } else {
+                                            newRecord = await createIncome(data);
+                                            showToast("Income saved successfully");
+                                        }
+                                        if (onSuccess) onSuccess(newRecord, type);
+                                        onClose();
+                                    } catch (error) {
+                                        console.error("Error saving transaction:", error);
+                                    }
                                 }}
                                 className={`px-6 py-3.5 rounded-2xl font-semibold text-white shadow-lg transition-all active:scale-95 ${primaryButtonColor}`}
                             >

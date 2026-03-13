@@ -1,9 +1,8 @@
-import React from 'react';
+import { NavLink } from 'react-router-dom';
 import {
     LayoutDashboard,
     TrendingUp,
     TrendingDown,
-    Target,
     BarChart2,
     CreditCard
 } from 'lucide-react';
@@ -14,12 +13,11 @@ export function cn(...inputs) {
     return twMerge(clsx(inputs));
 }
 
-export function Sidebar({ activeTab, onChangeTab }) {
+export function Sidebar() {
     const menuItems = [
-        { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard },
-        { id: 'gastos', name: 'Gastos', icon: TrendingDown },
-        { id: 'ingresos', name: 'Ingresos', icon: TrendingUp },
-        { id: 'presupuestos', name: 'Presupuestos', icon: Target },
+        { id: 'dashboard', name: 'Dashboard', icon: LayoutDashboard, path: '/dashboard' },
+        { id: 'gastos', name: 'Gastos', icon: TrendingDown, path: '/gastos' },
+        { id: 'ingresos', name: 'Ingresos', icon: TrendingUp, path: '/ingresos' },
     ];
 
     return (
@@ -36,25 +34,29 @@ export function Sidebar({ activeTab, onChangeTab }) {
 
                 <nav className="mt-6 px-4 space-y-2">
                     {menuItems.map((item) => (
-                        <button
+                        <NavLink
                             key={item.id}
-                            onClick={() => onChangeTab(item.id)}
-                            className={cn(
+                            to={item.path}
+                            className={({ isActive }) => cn(
                                 "w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ease-in-out group",
-                                activeTab === item.id
+                                isActive
                                     ? "bg-blue-600/10 text-blue-500"
                                     : "text-slate-400 hover:bg-[var(--color-card-bg)] hover:text-white"
                             )}
                         >
-                            <item.icon
-                                size={20}
-                                className={cn(
-                                    "transition-colors",
-                                    activeTab === item.id ? "text-blue-500" : "text-slate-400 group-hover:text-white"
-                                )}
-                            />
-                            <span className="font-medium text-[15px]">{item.name}</span>
-                        </button>
+                            {({ isActive }) => (
+                                <>
+                                    <item.icon
+                                        size={20}
+                                        className={cn(
+                                            "transition-colors",
+                                            isActive ? "text-blue-500" : "text-slate-400 group-hover:text-white"
+                                        )}
+                                    />
+                                    <span className="font-medium text-[15px]">{item.name}</span>
+                                </>
+                            )}
+                        </NavLink>
                     ))}
                 </nav>
             </div>
