@@ -69,9 +69,9 @@ function App() {
 
     // Combine and sort recent transactions
     const recentTransactions = [
-      ...expenses.map(e => ({ ...e, type: "gasto", desc: e.description })),
-      ...incomes.map(i => ({ ...i, type: "ingreso", desc: i.description }))
-    ].sort((a, b) => new Date(b.created_at || b.date) - new Date(a.created_at || a.date)).slice(0, 5);
+      ...expenses.map(e => ({ ...e, type: "gasto", desc: e.description, category: e.category })),
+      ...incomes.map(i => ({ ...i, type: "ingreso", desc: i.description, category: i.source || i.category }))
+    ].sort((a, b) => new Date(b.created_at || b.date) - new Date(a.created_at || a.date)).slice(0, 6);
 
     // Prepare CashFlowChart data (grouped by date)
     const dateMap = {};

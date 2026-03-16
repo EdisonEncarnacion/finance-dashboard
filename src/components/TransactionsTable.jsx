@@ -14,6 +14,11 @@ const categoryColors = {
     'Salario': 'bg-emerald-500/20 text-emerald-400',
     'Servicios': 'bg-purple-500/20 text-purple-400',
     'Transporte': 'bg-orange-500/20 text-orange-400',
+    'Freelance': 'bg-blue-500/20 text-blue-400',
+    'Inversiones': 'bg-indigo-500/20 text-indigo-400',
+    'Regalos': 'bg-amber-500/20 text-amber-400',
+    'Salud': 'bg-red-500/20 text-red-400',
+    'Entretenimiento': 'bg-pink-500/20 text-pink-400',
 };
 
 export function TransactionsTable({ transactions: propTransactions }) {
