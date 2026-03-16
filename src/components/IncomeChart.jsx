@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { cn } from './Sidebar';
 
-export function IncomeChart({ data: rawData = [] }) {
+export function IncomeChart({ data: rawData = [], total: propTotal, growth }) {
     const data = rawData.slice(-7).map(item => ({
         name: item.date ? new Date(item.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : '',
         value: parseFloat(item.amount) || 0
@@ -10,12 +10,18 @@ export function IncomeChart({ data: rawData = [] }) {
 
     const [activeFilter, setActiveFilter] = useState('ESTE MES');
 
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const periodLabel = `Enero - ${now.toLocaleDateString('es-ES', { month: 'long' })} ${currentYear}`;
+
+    const displayTotal = propTotal !== undefined ? propTotal : data.reduce((sum, item) => sum + item.value, 0);
+
     return (
         <div className="bg-[var(--color-card-bg)] p-6 rounded-2xl border border-[var(--color-border-dark)] h-full flex flex-col relative overflow-hidden group">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 relative z-10 gap-4">
                 <div>
                     <h3 className="text-xl font-bold text-white tracking-tight">Ingresos por Mes</h3>
-                    <p className="text-sm text-slate-400 mt-1">Enero - Junio 2024</p>
+                    <p className="text-sm text-slate-400 mt-1 capitalize">{periodLabel}</p>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
@@ -36,8 +42,15 @@ export function IncomeChart({ data: rawData = [] }) {
                 </div>
 
                 <div className="text-right">
-                    <p className="text-2xl font-bold text-white tracking-tight">S/ {data.reduce((sum, item) => sum + item.value, 0).toLocaleString()}</p>
-                    <p className="text-sm text-green-500 font-medium">+15% vs prev.</p>
+                    <p className="text-2xl font-bold text-white tracking-tight">S/ {displayTotal.toLocaleString()}</p>
+                    {growth !== undefined && (
+                        <p className={cn(
+                            "text-sm font-medium",
+                            growth >= 0 ? "text-green-500" : "text-red-500"
+                        )}>
+                            {growth >= 0 ? '+' : ''}{growth}% vs prev.
+                        </p>
+                    )}
                 </div>
             </div>
 

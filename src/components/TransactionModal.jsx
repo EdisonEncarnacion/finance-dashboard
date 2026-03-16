@@ -144,10 +144,18 @@ export function TransactionModal({ isOpen, onClose, type, onSuccess }) {
                                 onClick={async (e) => {
                                     e.preventDefault();
                                     try {
-                                        const data = {
-                                            ...formData,
-                                            amount: parseFloat(formData.amount) || 0
+                                        const data = isExpense ? {
+                                            category: formData.category,
+                                            amount: parseFloat(formData.amount) || 0,
+                                            description: formData.description,
+                                            date: formData.date
+                                        } : {
+                                            source: formData.category,
+                                            amount: parseFloat(formData.amount) || 0,
+                                            description: formData.description,
+                                            date: formData.date
                                         };
+
                                         let newRecord;
                                         if (isExpense) {
                                             newRecord = await createExpense(data);

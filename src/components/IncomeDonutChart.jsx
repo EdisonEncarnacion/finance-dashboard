@@ -6,7 +6,7 @@ export function IncomeDonutChart({ data: rawData = [] }) {
 
     // Group by source
     const sourcesMap = rawData.reduce((acc, item) => {
-        const source = item.source || 'Otros';
+        const source = item.source || item.category || 'Otros';
         acc[source] = (acc[source] || 0) + (parseFloat(item.amount) || 0);
         return acc;
     }, {});

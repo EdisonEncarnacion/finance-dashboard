@@ -61,8 +61,8 @@ function App() {
 
   // Dashboard Calculations
   const dashboardData = React.useMemo(() => {
-    const totalIncome = incomes.reduce((sum, inc) => sum + Number(inc.amount), 0);
-    const totalExpenses = expenses.reduce((sum, exp) => sum + Number(exp.amount), 0);
+    const totalIncome = incomes.reduce((sum, inc) => sum + Number(inc.amount || 0), 0);
+    const totalExpenses = expenses.reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
     const savings = totalIncome - totalExpenses;
     const savingsGoal = 1000;
     const savingsProgress = Math.round((savings / savingsGoal) * 100);
@@ -98,6 +98,61 @@ function App() {
       savingsGoal
     };
   }, [expenses, incomes]);
+
+  // Income Module Calculations
+  const incomeStats = React.useMemo(() => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const monthlyIncomes = incomes.filter(inc => {
+      const d = new Date(inc.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    });
+
+    const totalMonthlyIncome = monthlyIncomes.reduce((sum, inc) => sum + Number(inc.amount || 0), 0);
+    const weeklyAverage = totalMonthlyIncome / 4;
+
+    // Group by source (category field is used in TransactionModal)
+    const sourceMap = {};
+    incomes.forEach(inc => {
+      const source = inc.source || inc.category || 'Otros';
+      sourceMap[source] = (sourceMap[source] || 0) + Number(inc.amount || 0);
+    });
+
+    let mainSource = incomes.length > 0 ? 'N/A' : '-';
+    let maxAmount = 0;
+    Object.entries(sourceMap).forEach(([source, amount]) => {
+      if (amount > maxAmount) {
+        maxAmount = amount;
+        mainSource = source;
+      }
+    });
+
+    // Crecimiento
+    const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const prevMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+    const prevMonthIncomes = incomes.filter(inc => {
+      const d = new Date(inc.date);
+      return d.getMonth() === prevMonth && d.getFullYear() === prevMonthYear;
+    });
+    const prevMonthTotal = prevMonthIncomes.reduce((sum, inc) => sum + Number(inc.amount || 0), 0);
+
+    let growth = 0;
+    if (prevMonthTotal > 0) {
+      growth = ((totalMonthlyIncome - prevMonthTotal) / prevMonthTotal) * 100;
+    } else if (totalMonthlyIncome > 0 && prevMonthTotal === 0) {
+      growth = 100;
+    }
+
+    return {
+      totalMonthlyIncome,
+      weeklyAverage,
+      mainSource,
+      growth: Math.round(growth),
+      monthlyIncomes
+    };
+  }, [incomes]);
 
   return (
     <ToastProvider>
@@ -174,36 +229,40 @@ function App() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
                     <IncomeStatCard
                       title="Ingreso total del mes"
-                      amount="S/ 1,800"
-                      trend="+0%"
-                      trendUp={true}
+                      amount={`S/ ${incomeStats.totalMonthlyIncome.toLocaleString()}`}
+                      trend={`+${incomeStats.growth}%`}
+                      trendUp={incomeStats.growth >= 0}
                     />
                     <IncomeStatCard
                       title="Ingreso promedio semanal"
-                      amount="S/ 450"
-                      trend="+0%"
+                      amount={`S/ ${incomeStats.weeklyAverage.toLocaleString()}`}
+                      trend=""
                       trendUp={true}
                       subtitle=""
                     />
                     <IncomeStatCard
                       title="Fuente principal"
-                      amount="Salario"
-                      trend="+0%"
+                      amount={incomeStats.mainSource}
+                      trend=""
                       trendUp={true}
                       isLargeValue={false}
                     />
                     <IncomeStatCard
                       title="Crecimiento"
-                      amount="+12%"
-                      trend="~+12%"
-                      trendUp={true}
+                      amount={`${incomeStats.growth >= 0 ? '+' : ''}${incomeStats.growth}%`}
+                      trend={`~${incomeStats.growth >= 0 ? '+' : ''}${incomeStats.growth}%`}
+                      trendUp={incomeStats.growth >= 0}
                     />
                   </div>
 
                   {/* Middle Row: Income Chart & Donut Chart */}
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
                     <div className="lg:col-span-2">
-                      <IncomeChart data={incomes} />
+                      <IncomeChart
+                        data={incomes}
+                        total={incomeStats.totalMonthlyIncome}
+                        growth={incomeStats.growth}
+                      />
                     </div>
                     <div className="lg:col-span-1">
                       <IncomeDonutChart data={incomes} />
