@@ -4,6 +4,7 @@ import { ToastProvider } from './context/ToastContext';
 import { getExpenses, getIncomes } from './api/api';
 import { Sidebar } from './components/Sidebar';
 import { Topbar } from './components/Topbar';
+import { BottomNav } from './components/BottomNav';
 import { PageHeader } from './components/PageHeader';
 import { ExpenseStatCard } from './components/ExpenseStatCard';
 import { ExpenseChart } from './components/ExpenseChart';
@@ -11,7 +12,7 @@ import { ExpenseDonutChart } from './components/ExpenseDonutChart';
 import { ExpenseAlerts } from './components/ExpenseAlerts';
 import { SmartSuggestion } from './components/SmartSuggestion';
 import { ExpenseTransactionsTable } from './components/ExpenseTransactionsTable';
-import { Utensils } from 'lucide-react';
+import { Utensils, TrendingUp, TrendingDown, Target, Wallet } from 'lucide-react';
 
 // Income Components
 import { IncomeStatCard } from './components/IncomeStatCard';
@@ -156,11 +157,15 @@ function App() {
 
   return (
     <ToastProvider>
-      <div className="flex h-screen overflow-hidden bg-[var(--color-main-bg)] selection:bg-[var(--color-accent)] selection:text-white">
+      <div className="flex h-screen overflow-hidden bg-[var(--color-main-bg)] selection:bg-[var(--color-accent)] selection:text-white relative">
         <Sidebar activeTab={activeTab} />
 
-        <main className="flex-1 flex flex-col h-screen overflow-y-auto w-full">
-          <Topbar activeTab={activeTab} dateFilter={dateFilter} setDateFilter={setDateFilter} />
+        <main className="flex-1 flex flex-col h-screen overflow-y-auto w-full pb-24 md:pb-0">
+          <Topbar
+            activeTab={activeTab}
+            dateFilter={dateFilter}
+            setDateFilter={setDateFilter}
+          />
 
           <div className="flex-1 p-4 md:p-8 pt-4 max-w-7xl mx-auto w-full">
             <Routes>
@@ -198,35 +203,38 @@ function App() {
                       icon={Utensils}
                     />
                     <ExpenseStatCard
-                      title="Variación vs mes anterior"
-                      amount="+8%"
-                      trend="~+8%"
-                      trendUp={false}
+                      title="Meta de ahorro"
+                      amount="S/ 1,000"
+                      trend="+12%"
+                      trendUp={true}
+                      isLargeValue={false}
+                      icon={Target}
                     />
                   </div>
 
-                  {/* Middle Row: Charts */}
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                  {/* Main Content: Chart and Table */}
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2">
                       <ExpenseChart data={expenses} />
                     </div>
-                    <div className="lg:col-span-1">
-                      <ExpenseDonutChart data={expenses} />
+                    <div>
+                      <ExpenseTransactionsTable transactions={expenses} />
                     </div>
-                  </div>
-
-                  {/* Bottom Row: Transactions */}
-                  <div className="grid grid-cols-1 gap-6 pb-12">
-                    <ExpenseTransactionsTable transactions={expenses} />
                   </div>
                 </>
               } />
 
               <Route path="/ingresos" element={
                 <>
-                  <PageHeader title="Ingresos" selectedMonth={selectedMonth} setSelectedMonth={setSelectedMonth} onSuccess={loadData} />
+                  <PageHeader
+                    title="Ingresos"
+                    selectedMonth={selectedMonth}
+                    setSelectedMonth={setSelectedMonth}
+                    onSuccess={loadData}
+                  />
+
                   {/* Top Row: Stat Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 mt-6">
                     <IncomeStatCard
                       title="Ingreso total del mes"
                       amount={`S/ ${incomeStats.totalMonthlyIncome.toLocaleString()}`}
@@ -236,7 +244,7 @@ function App() {
                     <IncomeStatCard
                       title="Ingreso promedio semanal"
                       amount={`S/ ${incomeStats.weeklyAverage.toLocaleString()}`}
-                      trend=""
+                      trend="Estable"
                       trendUp={true}
                       subtitle=""
                     />
@@ -255,74 +263,74 @@ function App() {
                     />
                   </div>
 
-                  {/* Middle Row: Income Chart & Donut Chart */}
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2">
                       <IncomeChart
                         data={incomes}
-                        total={incomeStats.totalMonthlyIncome}
-                        growth={incomeStats.growth}
+                        total={`S/ ${incomeStats.totalMonthlyIncome.toLocaleString()}`}
+                        growth={`${incomeStats.growth}%`}
                       />
                     </div>
-                    <div className="lg:col-span-1">
+                    <div>
                       <IncomeDonutChart data={incomes} />
                     </div>
                   </div>
 
-                  {/* Bottom Row: Transactions */}
-                  <div className="grid grid-cols-1 gap-6 pb-12">
+                  <div className="mt-6">
                     <IncomeTransactionsTable transactions={incomes} />
                   </div>
                 </>
               } />
 
               <Route path="/dashboard" element={
-                <>
-                  <div className="mb-6"></div> {/* Spacer since Topbar has the title now */}
+                <div className="space-y-6">
+                  {/* Dashboard Header is handled by Topbar */}
 
-                  {/* Stat Cards row */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+                  {/* Top Row stats based on real totals from hook/state */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
                     <StatCard
-                      type="income"
-                      dateFilter={dateFilter}
+                      title="Ingreso mensual"
                       value={`S/ ${dashboardData.totalIncome.toLocaleString()}`}
+                      trend="+5%"
+                      trendUp={true}
+                      icon={TrendingUp}
                     />
                     <StatCard
-                      type="expense"
-                      dateFilter={dateFilter}
+                      title="Gastos del mes"
                       value={`S/ ${dashboardData.totalExpenses.toLocaleString()}`}
+                      trend="-2%"
+                      trendUp={false}
+                      icon={TrendingDown}
                     />
                     <StatCard
-                      type="savingsGoal"
-                      dateFilter={dateFilter}
-                      value="S/ 1,000"
+                      title="Meta de ahorro"
+                      value={`S/ ${dashboardData.savingsGoal.toLocaleString()}`}
+                      trend="Objetivo"
+                      trendUp={true}
+                      icon={Target}
                     />
                     <StatCard
-                      type="savings"
-                      dateFilter={dateFilter}
+                      title="Ahorro actual"
                       value={`S/ ${dashboardData.savings.toLocaleString()}`}
+                      trend="+12%"
+                      trendUp={true}
+                      icon={Wallet}
                     />
                   </div>
 
-                  {/* Charts row */}
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-1">
                       <SavingsProgress
-                        dateFilter={dateFilter}
                         current={dashboardData.savings}
                         goal={dashboardData.savingsGoal}
                       />
                     </div>
                     <div className="lg:col-span-2">
-                      <CashFlowChart
-                        dateFilter={dateFilter}
-                        data={dashboardData.cashFlowData}
-                      />
+                      <CashFlowChart data={dashboardData.cashFlowData} />
                     </div>
                   </div>
 
-                  {/* Bottom row */}
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pb-12">
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2">
                       <TransactionsTable transactions={dashboardData.recentTransactions} />
                     </div>
@@ -330,7 +338,7 @@ function App() {
                       <ExpenseDonutChart data={expenses} />
                     </div>
                   </div>
-                </>
+                </div>
               } />
 
               <Route path="*" element={
@@ -342,6 +350,8 @@ function App() {
             </Routes>
           </div>
         </main>
+
+        <BottomNav />
       </div>
     </ToastProvider>
   );

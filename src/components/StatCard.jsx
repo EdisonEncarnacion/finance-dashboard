@@ -36,10 +36,27 @@ const cardData = {
     }
 }
 
-export function StatCard({ type, dateFilter = 'mes', value }) {
-    const { icon: Icon, color, bg } = icons[type];
-    const { title, amount: mockAmount, trend, trendUp } = cardData[dateFilter][type];
-    const amount = value !== undefined ? value : mockAmount;
+export function StatCard({
+    type,
+    dateFilter = 'mes',
+    value,
+    title: propTitle,
+    icon: propIcon,
+    trend: propTrend,
+    trendUp: propTrendUp
+}) {
+    // Determine data source: either from props or from type-based lookup
+    const typeData = type ? icons[type] : null;
+    const mockData = (type && cardData[dateFilter]) ? cardData[dateFilter][type] : null;
+
+    const Icon = propIcon || (typeData ? typeData.icon : Wallet);
+    const color = typeData ? typeData.color : 'text-blue-400';
+    const bg = typeData ? typeData.bg : 'bg-blue-400/10';
+
+    const title = propTitle || (mockData ? mockData.title : 'Estadística');
+    const trend = propTrend !== undefined ? propTrend : (mockData ? mockData.trend : null);
+    const trendUp = propTrendUp !== undefined ? propTrendUp : (mockData ? mockData.trendUp : true);
+    const amount = value !== undefined ? value : (mockData ? mockData.amount : 'S/ 0');
 
     return (
         <div className="bg-[var(--color-card-bg)] rounded-3xl p-6 border border-[var(--color-border-dark)] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
