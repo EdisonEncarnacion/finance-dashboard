@@ -181,35 +181,43 @@ function App() {
                   />
 
                   {/* Top Row: Stat Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 mt-6">
-                    <ExpenseStatCard
-                      title="Gasto total del mes"
-                      amount="S/ 650"
-                      trend="+8%"
-                      trendUp={false}
-                    />
-                    <ExpenseStatCard
-                      title="Gasto promedio diario"
-                      amount="S/ 21"
-                      trend="0%"
-                      trendUp={true}
-                    />
-                    <ExpenseStatCard
-                      title="Categoría mayor gasto"
-                      amount="Comida"
-                      trend=""
-                      trendUp={true}
-                      isLargeValue={false}
-                      icon={Utensils}
-                    />
-                    <ExpenseStatCard
-                      title="Meta de ahorro"
-                      amount="S/ 1,000"
-                      trend="+12%"
-                      trendUp={true}
-                      isLargeValue={false}
-                      icon={Target}
-                    />
+                  <div className="flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 pb-4 md:pb-0 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 mt-6">
+                    <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
+                      <ExpenseStatCard
+                        title="Gasto total del mes"
+                        amount="S/ 650"
+                        trend="+8%"
+                        trendUp={false}
+                      />
+                    </div>
+                    <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
+                      <ExpenseStatCard
+                        title="Gasto promedio diario"
+                        amount="S/ 21"
+                        trend="0%"
+                        trendUp={true}
+                      />
+                    </div>
+                    <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
+                      <ExpenseStatCard
+                        title="Categoría mayor gasto"
+                        amount="Comida"
+                        trend=""
+                        trendUp={true}
+                        isLargeValue={false}
+                        icon={Utensils}
+                      />
+                    </div>
+                    <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
+                      <ExpenseStatCard
+                        title="Meta de ahorro"
+                        amount="S/ 1,000"
+                        trend="+12%"
+                        trendUp={true}
+                        isLargeValue={false}
+                        icon={Target}
+                      />
+                    </div>
                   </div>
 
                   {/* Main Content: Chart and Table */}
@@ -218,8 +226,12 @@ function App() {
                       <ExpenseChart data={expenses} />
                     </div>
                     <div>
-                      <ExpenseTransactionsTable transactions={expenses} />
+                      <ExpenseDonutChart data={expenses} />
                     </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <ExpenseTransactionsTable transactions={expenses} />
                   </div>
                 </>
               } />
@@ -234,33 +246,41 @@ function App() {
                   />
 
                   {/* Top Row: Stat Cards */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 mt-6">
-                    <IncomeStatCard
-                      title="Ingreso total del mes"
-                      amount={`S/ ${incomeStats.totalMonthlyIncome.toLocaleString()}`}
-                      trend={`+${incomeStats.growth}%`}
-                      trendUp={incomeStats.growth >= 0}
-                    />
-                    <IncomeStatCard
-                      title="Ingreso promedio semanal"
-                      amount={`S/ ${incomeStats.weeklyAverage.toLocaleString()}`}
-                      trend="Estable"
-                      trendUp={true}
-                      subtitle=""
-                    />
-                    <IncomeStatCard
-                      title="Fuente principal"
-                      amount={incomeStats.mainSource}
-                      trend=""
-                      trendUp={true}
-                      isLargeValue={false}
-                    />
-                    <IncomeStatCard
-                      title="Crecimiento"
-                      amount={`${incomeStats.growth >= 0 ? '+' : ''}${incomeStats.growth}%`}
-                      trend={`~${incomeStats.growth >= 0 ? '+' : ''}${incomeStats.growth}%`}
-                      trendUp={incomeStats.growth >= 0}
-                    />
+                  <div className="flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 pb-4 md:pb-0 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0 mt-6">
+                    <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
+                      <IncomeStatCard
+                        title="Ingreso total del mes"
+                        amount={`S/ ${incomeStats.totalMonthlyIncome.toLocaleString()}`}
+                        trend={`+${incomeStats.growth}%`}
+                        trendUp={incomeStats.growth >= 0}
+                      />
+                    </div>
+                    <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
+                      <IncomeStatCard
+                        title="Ingreso promedio semanal"
+                        amount={`S/ ${incomeStats.weeklyAverage.toLocaleString()}`}
+                        trend="Estable"
+                        trendUp={true}
+                        subtitle=""
+                      />
+                    </div>
+                    <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
+                      <IncomeStatCard
+                        title="Fuente principal"
+                        amount={incomeStats.mainSource}
+                        trend=""
+                        trendUp={true}
+                        isLargeValue={false}
+                      />
+                    </div>
+                    <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
+                      <IncomeStatCard
+                        title="Crecimiento"
+                        amount={`${incomeStats.growth >= 0 ? '+' : ''}${incomeStats.growth}%`}
+                        trend={`~${incomeStats.growth >= 0 ? '+' : ''}${incomeStats.growth}%`}
+                        trendUp={incomeStats.growth >= 0}
+                      />
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -287,35 +307,43 @@ function App() {
                   {/* Dashboard Header is handled by Topbar */}
 
                   {/* Top Row stats based on real totals from hook/state */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-                    <StatCard
-                      title="Ingreso mensual"
-                      value={`S/ ${dashboardData.totalIncome.toLocaleString()}`}
-                      trend="+5%"
-                      trendUp={true}
-                      icon={TrendingUp}
-                    />
-                    <StatCard
-                      title="Gastos del mes"
-                      value={`S/ ${dashboardData.totalExpenses.toLocaleString()}`}
-                      trend="-2%"
-                      trendUp={false}
-                      icon={TrendingDown}
-                    />
-                    <StatCard
-                      title="Meta de ahorro"
-                      value={`S/ ${dashboardData.savingsGoal.toLocaleString()}`}
-                      trend="Objetivo"
-                      trendUp={true}
-                      icon={Target}
-                    />
-                    <StatCard
-                      title="Ahorro actual"
-                      value={`S/ ${dashboardData.savings.toLocaleString()}`}
-                      trend="+12%"
-                      trendUp={true}
-                      icon={Wallet}
-                    />
+                  <div className="flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 pb-4 md:pb-0 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
+                    <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
+                      <StatCard
+                        title="Ingreso mensual"
+                        value={`S/ ${dashboardData.totalIncome.toLocaleString()}`}
+                        trend="+5%"
+                        trendUp={true}
+                        icon={TrendingUp}
+                      />
+                    </div>
+                    <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
+                      <StatCard
+                        title="Gastos del mes"
+                        value={`S/ ${dashboardData.totalExpenses.toLocaleString()}`}
+                        trend="-2%"
+                        trendUp={false}
+                        icon={TrendingDown}
+                      />
+                    </div>
+                    <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
+                      <StatCard
+                        title="Meta de ahorro"
+                        value={`S/ ${dashboardData.savingsGoal.toLocaleString()}`}
+                        trend="Objetivo"
+                        trendUp={true}
+                        icon={Target}
+                      />
+                    </div>
+                    <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
+                      <StatCard
+                        title="Ahorro actual"
+                        value={`S/ ${dashboardData.savings.toLocaleString()}`}
+                        trend="+12%"
+                        trendUp={true}
+                        icon={Wallet}
+                      />
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

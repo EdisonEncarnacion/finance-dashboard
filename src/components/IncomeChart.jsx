@@ -21,7 +21,6 @@ export function IncomeChart({ data: rawData = [], total: propTotal, growth }) {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 relative z-10 gap-4">
                 <div>
                     <h3 className="text-xl font-bold text-white tracking-tight">Ingresos por Mes</h3>
-                    <p className="text-sm text-slate-400 mt-1 capitalize">{periodLabel}</p>
                 </div>
 
                 <div className="flex flex-wrap gap-2">
@@ -39,18 +38,6 @@ export function IncomeChart({ data: rawData = [], total: propTotal, growth }) {
                             {filter}
                         </button>
                     ))}
-                </div>
-
-                <div className="text-right">
-                    <p className="text-2xl font-bold text-white tracking-tight">S/ {displayTotal.toLocaleString()}</p>
-                    {growth !== undefined && (
-                        <p className={cn(
-                            "text-sm font-medium",
-                            growth >= 0 ? "text-green-500" : "text-red-500"
-                        )}>
-                            {growth >= 0 ? '+' : ''}{growth}% vs prev.
-                        </p>
-                    )}
                 </div>
             </div>
 
