@@ -95,7 +95,6 @@ function App() {
       savings,
       savingsProgress,
       recentTransactions,
-      cashFlowData,
       savingsGoal
     };
   }, [expenses, incomes]);
@@ -354,7 +353,11 @@ function App() {
                       />
                     </div>
                     <div className="lg:col-span-2">
-                      <CashFlowChart data={dashboardData.cashFlowData} />
+                      <CashFlowChart
+                        incomes={incomes}
+                        expenses={expenses}
+                        activeFilter={dateFilter.toUpperCase()}
+                      />
                     </div>
                   </div>
 

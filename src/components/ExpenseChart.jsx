@@ -127,7 +127,7 @@ export function ExpenseChart({ data: rawData = [] }) {
 
             <div className="flex-1 w-full min-h-[300px] relative z-10 mt-4">
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={aggregatedData} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
+                    <AreaChart data={aggregatedData} margin={{ top: 10, right: 10, left: 10, bottom: 40 }}>
                         <defs>
                             <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
                                 <stop offset="5%" stopColor="#EF4444" stopOpacity={0.4} />
@@ -141,6 +141,7 @@ export function ExpenseChart({ data: rawData = [] }) {
                             tickLine={false}
                             tick={{ fill: '#64748b', fontSize: 10, fontWeight: 600 }}
                             dy={10}
+                            padding={{ left: 20, right: 20 }}
                             ticks={getTicks()}
                             interval={0}
                             tickFormatter={(tick) => {
