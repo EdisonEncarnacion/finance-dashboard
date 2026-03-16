@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3001";
+const API_URL = "https://backend-finance-hu46.onrender.coms";
 
 export async function getExpenses() {
     const res = await fetch(`${API_URL}/expenses`);
@@ -6,6 +6,7 @@ export async function getExpenses() {
 }
 
 export async function getIncomes() {
+    s
     const res = await fetch(`${API_URL}/incomes`);
     return res.json();
 }
