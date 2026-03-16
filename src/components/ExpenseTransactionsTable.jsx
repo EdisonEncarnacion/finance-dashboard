@@ -26,11 +26,13 @@ export function ExpenseTransactionsTable({ transactions = [] }) {
                     <tbody className="divide-y divide-[var(--color-border-dark)] text-slate-300">
                         {transactions.map((tx) => (
                             <tr key={tx.id} className="transition-colors group/row">
-                                <td className="px-6 py-5 whitespace-nowrap text-slate-400">{tx.date}</td>
+                                <td className="px-6 py-5 whitespace-nowrap text-slate-400">
+                                    {tx.date ? new Date(tx.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : tx.date}
+                                </td>
                                 <td className="px-6 py-5 whitespace-nowrap font-medium text-white">{tx.category}</td>
                                 <td className="px-6 py-5">{tx.description}</td>
                                 <td className="px-6 py-5 whitespace-nowrap text-right font-bold text-red-400">
-                                    S/ {tx.amount.toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                                    S/ {Number(tx.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                 </td>
                                 <td className="px-6 py-5 whitespace-nowrap text-center">
                                     <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-500">
