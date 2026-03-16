@@ -1,20 +1,108 @@
-import React, { useState } from 'react';
-import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import React, { useState, useMemo } from 'react';
+import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { cn } from './Sidebar';
 
-export function IncomeChart({ data: rawData = [], total: propTotal, growth }) {
-    const data = rawData.slice(-7).map(item => ({
-        name: item.date ? new Date(item.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : '',
-        value: parseFloat(item.amount) || 0
-    }));
-
+export function IncomeChart({ data: rawData = [] }) {
     const [activeFilter, setActiveFilter] = useState('ESTE MES');
 
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    const periodLabel = `Enero - ${now.toLocaleDateString('es-ES', { month: 'long' })} ${currentYear}`;
+    const aggregatedData = useMemo(() => {
+        const now = new Date();
+        const grouped = {};
 
-    const displayTotal = propTotal !== undefined ? propTotal : data.reduce((sum, item) => sum + item.value, 0);
+        // Helper to format currency
+        const formatCurrency = (val) => `S/ ${val.toLocaleString()}`;
+
+        // Initialize groups based on filter to ensure all points are visible
+        if (activeFilter === 'HOY') {
+            for (let i = 0; i < 24; i++) grouped[`${i.toString().padStart(2, '0')}:00`] = 0;
+        } else if (activeFilter === 'SEMANA') {
+            ['Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab', 'Dom'].forEach(d => grouped[d] = 0);
+        } else if (activeFilter === 'ESTE MES') {
+            // Aggregate in 5 weekly points for cleaner fintech waves
+            [1, 7, 14, 21, 28].forEach(day => grouped[day] = 0);
+        } else if (activeFilter === 'ESTE AÑO') {
+            ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'].forEach(m => grouped[m] = 0);
+        }
+
+        // Aggregate data
+        rawData.forEach(item => {
+            if (!item.date) return;
+            const date = new Date(item.date);
+            const amount = parseFloat(item.amount) || 0;
+
+            let key;
+            let include = false;
+
+            if (activeFilter === 'HOY') {
+                if (date.toDateString() === now.toDateString()) {
+                    key = `${date.getHours().toString().padStart(2, '0')}:00`;
+                    include = true;
+                }
+            } else if (activeFilter === 'SEMANA') {
+                // Last 7 days or current week? Standard SaaS usually shows current week
+                const startOfWeek = new Date(now);
+                startOfWeek.setDate(now.getDate() - now.getDay() + (now.getDay() === 0 ? -6 : 1));
+                startOfWeek.setHours(0, 0, 0, 0);
+                if (date >= startOfWeek) {
+                    key = ['Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab'][date.getDay()];
+                    include = true;
+                }
+            } else if (activeFilter === 'ESTE MES') {
+                if (date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()) {
+                    const day = date.getDate();
+                    if (day <= 7) key = 1;
+                    else if (day <= 14) key = 7;
+                    else if (day <= 21) key = 14;
+                    else if (day <= 28) key = 21;
+                    else key = 28; // Group remaining days into the last point
+                    include = true;
+                }
+            } else if (activeFilter === 'ESTE AÑO') {
+                if (date.getFullYear() === now.getFullYear()) {
+                    key = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'][date.getMonth()];
+                    include = true;
+                }
+            }
+
+            if (include && grouped[key] !== undefined) {
+                grouped[key] += amount;
+            }
+        });
+
+        return Object.entries(grouped).map(([name, value]) => ({ name, value }));
+    }, [rawData, activeFilter]);
+
+    const getTicks = () => {
+        if (activeFilter === 'HOY') return ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'];
+        if (activeFilter === 'ESTE MES') return ['1', '7', '14', '21', '28'];
+        return undefined;
+    };
+
+    const CustomTooltip = ({ active, payload, label }) => {
+        if (active && payload && payload.length) {
+            const getLabel = () => {
+                if (activeFilter === 'SEMANA') return label;
+                if (activeFilter === 'ESTE MES') {
+                    const now = new Date();
+                    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+                    return `Semana del ${label} ${months[now.getMonth()]}`;
+                }
+                return label;
+            };
+
+            return (
+                <div className="bg-[#0F172A]/90 backdrop-blur-md border border-slate-700/50 p-3 rounded-xl shadow-2xl ring-1 ring-white/10">
+                    <p className="text-white font-bold text-lg tracking-tight">
+                        S/ {payload[0].value.toLocaleString()}
+                    </p>
+                    <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mt-0.5">
+                        {getLabel()}
+                    </p>
+                </div>
+            );
+        }
+        return null;
+    };
 
     return (
         <div className="bg-[var(--color-card-bg)] p-6 rounded-2xl border border-[var(--color-border-dark)] h-full flex flex-col relative overflow-hidden group">
@@ -24,7 +112,7 @@ export function IncomeChart({ data: rawData = [], total: propTotal, growth }) {
                 </div>
 
                 <div className="flex flex-wrap gap-2">
-                    {['HOY', 'ESTA SEMANA', 'ESTE MES', 'ESTE AÑO'].map((filter) => (
+                    {['HOY', 'SEMANA', 'ESTE MES', 'ESTE AÑO'].map((filter) => (
                         <button
                             key={filter}
                             onClick={() => setActiveFilter(filter)}
@@ -43,48 +131,49 @@ export function IncomeChart({ data: rawData = [], total: propTotal, growth }) {
 
             <div className="flex-1 w-full min-h-[300px] relative z-10 mt-4">
                 <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={data} margin={{ top: 10, right: 0, left: 0, bottom: 0 }}>
+                    <AreaChart data={aggregatedData} margin={{ top: 10, right: 10, left: 0, bottom: 30 }}>
                         <defs>
                             <linearGradient id="colorIncome" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.8} />
-                                <stop offset="95%" stopColor="#3B82F6" stopOpacity={0.0} />
+                                <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.4} />
+                                <stop offset="100%" stopColor="#3B82F6" stopOpacity={0.0} />
                             </linearGradient>
                         </defs>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1e293b" opacity={0.3} />
                         <XAxis
                             dataKey="name"
                             axisLine={false}
                             tickLine={false}
                             tick={{ fill: '#64748b', fontSize: 10, fontWeight: 600 }}
                             dy={10}
-                        />
-                        <Tooltip
-                            content={({ active, payload }) => {
-                                if (active && payload && payload.length) {
-                                    return (
-                                        <div className="bg-[var(--color-sidebar-bg)] border border-[var(--color-border-dark)] p-3 rounded-xl shadow-xl">
-                                            <p className="text-slate-400 text-xs mb-1 font-medium">{payload[0].payload.name || 'Detalle'}</p>
-                                            <p className="text-white font-bold text-lg">
-                                                S/ {payload[0].value.toLocaleString()}
-                                            </p>
-                                        </div>
-                                    );
+                            ticks={getTicks()}
+                            interval={0}
+                            tickFormatter={(tick) => {
+                                if (activeFilter === 'ESTE MES') {
+                                    const now = new Date();
+                                    const months = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+                                    return `${tick} ${months[now.getMonth()]}`;
                                 }
-                                return null;
+                                return tick;
                             }}
                         />
+                        <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#334155', strokeWidth: 1 }} />
                         <Area
                             type="monotone"
                             dataKey="value"
                             stroke="#3B82F6"
-                            strokeWidth={3}
+                            strokeWidth={4}
                             fillOpacity={1}
                             fill="url(#colorIncome)"
                             animationDuration={1500}
-                            animationEasing="ease-out"
+                            animationEasing="ease-in-out"
+                            activeDot={{ r: 8, strokeWidth: 0, fill: '#3B82F6' }}
                         />
                     </AreaChart>
                 </ResponsiveContainer>
             </div>
+
+            {/* Background Glow */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/5 rounded-full blur-3xl group-hover:bg-blue-500/10 transition-colors pointer-events-none -z-0"></div>
         </div>
     );
 }
