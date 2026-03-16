@@ -1,15 +1,26 @@
-import React from 'react';
-import { Download } from 'lucide-react';
+import React, { useState } from 'react';
 
 export function ExpenseTransactionsTable({ transactions = [] }) {
+    const [showAll, setShowAll] = useState(false);
+
+    const sortedTransactions = [...transactions].sort((a, b) =>
+        new Date(b.date || b.created_at) - new Date(a.date || a.created_at)
+    );
+
+    const displayTransactions = showAll ? sortedTransactions : sortedTransactions.slice(0, 6);
+
     return (
         <div className="bg-[var(--color-card-bg)] rounded-2xl border border-[var(--color-border-dark)] overflow-hidden shadow-sm">
             <div className="p-6 border-b border-[var(--color-border-dark)] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h3 className="text-xl font-bold text-white tracking-tight">Transacciones de Gastos</h3>
-                <button className="flex items-center space-x-2 text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors">
-                    <Download size={16} />
-                    <span>Exportar CSV</span>
-                </button>
+                {!showAll && sortedTransactions.length > 6 && (
+                    <button
+                        onClick={() => setShowAll(true)}
+                        className="text-sm font-medium text-blue-400 hover:text-blue-300 transition-colors"
+                    >
+                        Ver todo
+                    </button>
+                )}
             </div>
 
             <div className="overflow-x-auto relative z-10">
@@ -24,7 +35,7 @@ export function ExpenseTransactionsTable({ transactions = [] }) {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-border-dark)] text-slate-300">
-                        {transactions.map((tx) => (
+                        {displayTransactions.map((tx) => (
                             <tr key={tx.id} className="transition-colors group/row">
                                 <td className="px-6 py-5 whitespace-nowrap text-slate-400">
                                     {tx.date ? new Date(tx.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : tx.date}

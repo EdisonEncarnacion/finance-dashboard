@@ -1,13 +1,26 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 export function IncomeTransactionsTable({ transactions = [] }) {
+    const [showAll, setShowAll] = useState(false);
+
+    const sortedTransactions = [...transactions].sort((a, b) =>
+        new Date(b.date || b.created_at) - new Date(a.date || a.created_at)
+    );
+
+    const displayTransactions = showAll ? sortedTransactions : sortedTransactions.slice(0, 6);
+
     return (
         <div className="bg-[var(--color-card-bg)] rounded-2xl border border-[var(--color-border-dark)] overflow-hidden hover:border-slate-500 transition-colors group">
             <div className="p-6 border-b border-[var(--color-border-dark)] flex justify-between items-center relative z-10">
                 <h3 className="text-xl font-bold text-white tracking-tight">Transacciones de Ingresos</h3>
-                <button className="text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors">
-                    Ver todo
-                </button>
+                {!showAll && sortedTransactions.length > 6 && (
+                    <button
+                        onClick={() => setShowAll(true)}
+                        className="text-sm text-blue-400 hover:text-blue-300 font-medium transition-colors"
+                    >
+                        Ver todo
+                    </button>
+                )}
             </div>
 
             <div className="overflow-x-auto relative z-10">
@@ -22,7 +35,7 @@ export function IncomeTransactionsTable({ transactions = [] }) {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-border-dark)] text-slate-300">
-                        {transactions.map((tx) => (
+                        {displayTransactions.map((tx) => (
                             <tr key={tx.id} className="transition-colors group/row">
                                 <td className="px-6 py-5 whitespace-nowrap text-slate-400">
                                     {tx.date ? new Date(tx.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : tx.date}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { cn } from './Sidebar';
+import { useNavigate } from 'react-router-dom';
 
 const transactions = [
     { id: 1, date: '15 Mar, 2024', category: 'Comida', desc: 'Supermercado Metro', amount: 'S/ 120.00', type: 'gasto' },
@@ -23,14 +24,20 @@ const categoryColors = {
 
 export function TransactionsTable({ transactions: propTransactions }) {
     const displayTransactions = propTransactions || transactions;
+    const navigate = useNavigate();
+
+    const handleRowClick = (tx) => {
+        if (tx.type === 'ingreso' || tx.type === 'income') {
+            navigate('/ingresos');
+        } else {
+            navigate('/gastos');
+        }
+    };
 
     return (
         <div className="bg-[var(--color-card-bg)] rounded-3xl p-6 border border-[var(--color-border-dark)] shadow-sm col-span-1 md:col-span-2 flex flex-col">
             <div className="flex justify-between items-center mb-6">
                 <h3 className="text-white font-bold text-lg">Transacciones Recientes</h3>
-                <button className="text-[var(--color-accent)] text-sm font-medium hover:text-blue-400 transition-colors">
-                    Ver todo
-                </button>
             </div>
 
             <div className="overflow-x-auto">
@@ -46,7 +53,11 @@ export function TransactionsTable({ transactions: propTransactions }) {
                     </thead>
                     <tbody className="divide-y divide-[var(--color-border-dark)]/30">
                         {displayTransactions.map((tx) => (
-                            <tr key={tx.id} className="hover:bg-white/5 transition-colors group">
+                            <tr
+                                key={tx.id}
+                                onClick={() => handleRowClick(tx)}
+                                className="hover:bg-white/5 transition-all duration-200 group cursor-pointer active:scale-[0.99]"
+                            >
                                 <td className="py-4 px-2 text-sm text-slate-300 font-medium whitespace-nowrap">
                                     {tx.date ? new Date(tx.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : tx.date}
                                 </td>

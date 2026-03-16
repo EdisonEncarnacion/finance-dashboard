@@ -14,7 +14,8 @@ export function IncomeDonutChart({ data: rawData = [] }) {
     const colors = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444'];
     const data = Object.keys(sourcesMap).map((name, index) => ({
         name,
-        value: sourcesMap[name],
+        value: totalAmount > 0 ? Math.round((sourcesMap[name] / totalAmount) * 100) : 0,
+        amount: sourcesMap[name],
         color: colors[index % colors.length]
     }));
 
@@ -22,9 +23,8 @@ export function IncomeDonutChart({ data: rawData = [] }) {
 
     return (
         <div className="bg-[var(--color-card-bg)] p-6 rounded-2xl border border-[var(--color-border-dark)] h-full flex flex-col relative overflow-hidden group hover:border-slate-500 transition-colors">
-            <div className="mb-6">
-                <h3 className="text-xl font-bold text-white tracking-tight">Fuentes de Ingreso</h3>
-                <p className="text-sm text-slate-400 mt-1">Distribución por categoría</p>
+            <div className="mb-2">
+                <h3 className="text-xl font-bold text-white tracking-tight">Ingresos por Categoría</h3>
             </div>
 
             <div className="flex-1 min-h-[250px] relative mt-4">
@@ -49,7 +49,7 @@ export function IncomeDonutChart({ data: rawData = [] }) {
                                         <div className="bg-[var(--color-sidebar-bg)] border border-[var(--color-border-dark)] p-3 rounded-xl shadow-xl">
                                             <p className="text-slate-400 text-xs mb-1 font-medium">{payload[0].name}</p>
                                             <p className="text-white font-bold">
-                                                S/ {payload[0].value.toLocaleString()}
+                                                {payload[0].value}%
                                             </p>
                                         </div>
                                     );
@@ -77,7 +77,7 @@ export function IncomeDonutChart({ data: rawData = [] }) {
                             />
                             <span className="text-slate-300 font-medium">{item.name}</span>
                         </div>
-                        <span className="text-white font-bold">S/ {item.value.toLocaleString()}</span>
+                        <span className="text-white font-bold">{item.value}%</span>
                     </div>
                 ))}
             </div>

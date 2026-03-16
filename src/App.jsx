@@ -154,6 +154,47 @@ function App() {
     };
   }, [incomes]);
 
+  const expenseStats = React.useMemo(() => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+    const dayOfMonth = now.getDate();
+
+    const monthlyExpenses = expenses.filter(exp => {
+      const d = new Date(exp.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    });
+
+    const totalMonthlyExpenses = monthlyExpenses.reduce(
+      (sum, exp) => sum + Number(exp.amount || 0),
+      0
+    );
+
+    const dailyAverage = totalMonthlyExpenses / dayOfMonth;
+
+    // Top Category
+    const categoryMap = {};
+    monthlyExpenses.forEach(exp => {
+      categoryMap[exp.category] = (categoryMap[exp.category] || 0) + Number(exp.amount || 0);
+    });
+
+    let topCategory = monthlyExpenses.length > 0 ? 'N/A' : '-';
+    let maxAmount = 0;
+    Object.entries(categoryMap).forEach(([cat, amount]) => {
+      if (amount > maxAmount) {
+        maxAmount = amount;
+        topCategory = cat;
+      }
+    });
+
+    return {
+      totalMonthlyExpenses,
+      dailyAverage,
+      topCategory,
+      monthlyExpenses
+    };
+  }, [expenses]);
+
   return (
     <ToastProvider>
       <div className="flex h-screen overflow-hidden bg-[var(--color-main-bg)] selection:bg-[var(--color-accent)] selection:text-white relative">
@@ -184,7 +225,7 @@ function App() {
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <ExpenseStatCard
                         title="Gasto total del mes"
-                        amount="S/ 650"
+                        amount={`S/ ${expenseStats.totalMonthlyExpenses.toLocaleString()}`}
                         trend="+8%"
                         trendUp={false}
                       />
@@ -192,7 +233,7 @@ function App() {
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <ExpenseStatCard
                         title="Gasto promedio diario"
-                        amount="S/ 21"
+                        amount={`S/ ${expenseStats.dailyAverage.toFixed(0)}`}
                         trend="0%"
                         trendUp={true}
                       />
@@ -200,7 +241,7 @@ function App() {
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <ExpenseStatCard
                         title="Categoría mayor gasto"
-                        amount="Comida"
+                        amount={expenseStats.topCategory}
                         trend=""
                         trendUp={true}
                         isLargeValue={false}
