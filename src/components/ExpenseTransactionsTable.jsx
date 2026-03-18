@@ -1,14 +1,43 @@
 import React, { useState } from 'react';
 import { formatCurrency } from '../utils/formatters';
+import { Trash2 } from 'lucide-react';
+import { deleteExpense } from '../api/api';
+import { DeleteModal } from './DeleteModal';
 
-export function ExpenseTransactionsTable({ transactions = [] }) {
+export function ExpenseTransactionsTable({ transactions = [], onDelete }) {
     const [showAll, setShowAll] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedId, setSelectedId] = useState(null);
 
     const sortedTransactions = [...transactions].sort((a, b) =>
         new Date(b.date || b.created_at) - new Date(a.date || a.created_at)
     );
 
     const displayTransactions = showAll ? sortedTransactions : sortedTransactions.slice(0, 6);
+
+    const handleOpenDelete = (id) => {
+        setSelectedId(id);
+        setShowDeleteModal(true);
+    };
+
+    const handleConfirmDelete = async () => {
+        if (!selectedId) return;
+        try {
+            await deleteExpense(selectedId);
+            if (onDelete) {
+                onDelete(selectedId);
+            }
+            setShowDeleteModal(false);
+            setSelectedId(null);
+        } catch (error) {
+            console.error('Error deleting expense:', error);
+        }
+    };
+
+    const handleCloseModal = () => {
+        setShowDeleteModal(false);
+        setSelectedId(null);
+    };
 
     return (
         <div className="bg-[var(--color-card-bg)] rounded-2xl border border-[var(--color-border-dark)] overflow-hidden shadow-sm">
@@ -32,7 +61,7 @@ export function ExpenseTransactionsTable({ transactions = [] }) {
                             <th className="px-6 py-4 font-semibold tracking-wider">Categoría</th>
                             <th className="px-6 py-4 font-semibold tracking-wider">Descripción</th>
                             <th className="px-6 py-4 font-semibold tracking-wider text-right">Monto</th>
-                            <th className="px-6 py-4 font-semibold tracking-wider text-center">Tipo</th>
+                            <th className="px-6 py-4 text-center"></th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-[var(--color-border-dark)] text-slate-300">
@@ -47,9 +76,13 @@ export function ExpenseTransactionsTable({ transactions = [] }) {
                                     {formatCurrency(tx.amount)}
                                 </td>
                                 <td className="px-6 py-5 whitespace-nowrap text-center">
-                                    <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-500">
-                                        {tx.type}
-                                    </span>
+                                    <button
+                                        onClick={() => handleOpenDelete(tx.id)}
+                                        className="text-slate-500 hover:text-red-500 hover:bg-red-500/10 p-2 rounded-lg transition-all active:scale-95 opacity-70 hover:opacity-100"
+                                        title="Eliminar gasto"
+                                    >
+                                        <Trash2 size={16} strokeWidth={1.5} />
+                                    </button>
                                 </td>
                             </tr>
                         ))}
@@ -62,6 +95,14 @@ export function ExpenseTransactionsTable({ transactions = [] }) {
                     No hay transacciones de gastos recientes.
                 </div>
             )}
+
+            <DeleteModal
+                isOpen={showDeleteModal}
+                onClose={handleCloseModal}
+                onConfirm={handleConfirmDelete}
+                title="Eliminar gasto"
+                message="¿Estás seguro de eliminar este gasto? Esta acción no se puede deshacer."
+            />
         </div>
     );
 }

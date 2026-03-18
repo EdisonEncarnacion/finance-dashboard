@@ -57,6 +57,14 @@ function App() {
     }
   };
 
+  const handleDeleteExpense = (id) => {
+    setExpenses(prev => prev.filter(item => item.id !== id));
+  };
+
+  const handleDeleteIncome = (id) => {
+    setIncomes(prev => prev.filter(item => item.id !== id));
+  };
+
   useEffect(() => {
     loadData();
   }, []);
@@ -272,7 +280,7 @@ function App() {
                   </div>
 
                   <div className="mt-6">
-                    <ExpenseTransactionsTable transactions={expenses} />
+                    <ExpenseTransactionsTable transactions={expenses} onDelete={handleDeleteExpense} />
                   </div>
                 </>
               } />
@@ -338,7 +346,7 @@ function App() {
                   </div>
 
                   <div className="mt-6">
-                    <IncomeTransactionsTable transactions={incomes} />
+                    <IncomeTransactionsTable transactions={incomes} onDelete={handleDeleteIncome} />
                   </div>
                 </>
               } />
