@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { formatCurrency } from '../utils/formatters';
 import { Trash2 } from 'lucide-react';
-import { deleteIncome } from '../api/api';
 import { DeleteModal } from './DeleteModal';
 
 export function IncomeTransactionsTable({ transactions = [], onDelete }) {
@@ -23,7 +22,9 @@ export function IncomeTransactionsTable({ transactions = [], onDelete }) {
     const handleConfirmDelete = async () => {
         if (!selectedId) return;
         try {
-            await deleteIncome(selectedId);
+            await fetch(`https://backend-finance-hu46.onrender.com/incomes/${selectedId}`, {
+                method: "DELETE"
+            });
             if (onDelete) {
                 onDelete(selectedId);
             }

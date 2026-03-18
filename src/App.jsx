@@ -71,11 +71,45 @@ function App() {
 
   // Dashboard Calculations
   const dashboardData = React.useMemo(() => {
-    const totalIncome = incomes.reduce((sum, inc) => sum + Number(inc.amount || 0), 0);
-    const totalExpenses = expenses.reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
-    const savings = totalIncome - totalExpenses;
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    const receivedIncome = incomes
+      .filter(inc => {
+        const d = new Date(inc.date);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear && d <= now;
+      })
+      .reduce((sum, inc) => sum + Number(inc.amount || 0), 0);
+
+    const monthlyExpenses = expenses
+      .filter(exp => {
+        const d = new Date(exp.date);
+        return d.getMonth() === currentMonth && d.getFullYear() === currentYear && d <= now;
+      })
+      .reduce((sum, exp) => sum + Number(exp.amount || 0), 0);
+
+    const availableBalance = receivedIncome - monthlyExpenses;
+
+    const prevMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const prevMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+
+    const prevMonthIncomes = incomes.filter(inc => {
+      const d = new Date(inc.date);
+      return d.getMonth() === prevMonth && d.getFullYear() === prevMonthYear;
+    });
+    const prevMonthTotal = prevMonthIncomes.reduce((sum, inc) => sum + Number(inc.amount || 0), 0);
+
+    let growth = 0;
+    if (prevMonthTotal > 0) {
+      growth = ((receivedIncome - prevMonthTotal) / prevMonthTotal) * 100;
+    } else if (receivedIncome > 0 && prevMonthTotal === 0) {
+      growth = 100;
+    }
+    const incomeGrowth = Math.round(growth);
+
     const savingsGoal = 1000;
-    const savingsProgress = Math.round((savings / savingsGoal) * 100);
+    const savingsProgress = Math.round((availableBalance / savingsGoal) * 100);
 
     // Combine and sort recent transactions
     const recentTransactions = [
@@ -99,9 +133,10 @@ function App() {
     const cashFlowData = Object.values(dateMap).sort((a, b) => new Date(a.name) - new Date(b.name));
 
     return {
-      totalIncome,
-      totalExpenses,
-      savings,
+      receivedIncome,
+      monthlyExpenses,
+      availableBalance,
+      incomeGrowth,
       savingsProgress,
       recentTransactions,
       savingsGoal
@@ -116,11 +151,14 @@ function App() {
 
     const monthlyIncomes = incomes.filter(inc => {
       const d = new Date(inc.date);
-      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear && d <= now;
     });
 
     const totalMonthlyIncome = monthlyIncomes.reduce((sum, inc) => sum + Number(inc.amount || 0), 0);
-    const weeklyAverage = totalMonthlyIncome / 4;
+
+    const dayOfMonth = now.getDate();
+    const weeksPassed = Math.max(1, Math.ceil(dayOfMonth / 7));
+    const weeklyAverage = totalMonthlyIncome / weeksPassed;
 
     // Group by source (category field is used in TransactionModal)
     const sourceMap = {};
@@ -308,9 +346,6 @@ function App() {
                       <IncomeStatCard
                         title="Ingreso promedio semanal"
                         amount={formatCurrency(incomeStats.weeklyAverage)}
-                        trend="Estable"
-                        trendUp={true}
-                        subtitle=""
                       />
                     </div>
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
@@ -359,18 +394,18 @@ function App() {
                   <div className="flex overflow-x-auto md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 pb-4 md:pb-0 snap-x snap-mandatory scrollbar-hide -mx-4 px-4 md:mx-0 md:px-0">
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <StatCard
-                        title="Ingreso mensual"
-                        value={formatCurrency(dashboardData.totalIncome)}
-                        trend="+5%"
-                        trendUp={true}
+                        title="Ingreso del mes"
+                        value={formatCurrency(dashboardData.receivedIncome)}
+                        trend={`${dashboardData.incomeGrowth >= 0 ? '+' : ''}${dashboardData.incomeGrowth}%`}
+                        trendUp={dashboardData.incomeGrowth >= 0}
                         icon={TrendingUp}
                       />
                     </div>
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <StatCard
                         title="Gastos del mes"
-                        value={formatCurrency(dashboardData.totalExpenses)}
-                        trend="-2%"
+                        value={formatCurrency(dashboardData.monthlyExpenses)}
+                        trend=""
                         trendUp={false}
                         icon={TrendingDown}
                       />
@@ -386,9 +421,9 @@ function App() {
                     </div>
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <StatCard
-                        title="Ahorro actual"
-                        value={formatCurrency(dashboardData.savings)}
-                        trend="+12%"
+                        title="Saldo disponible"
+                        value={formatCurrency(dashboardData.availableBalance)}
+                        trend=""
                         trendUp={true}
                         icon={Wallet}
                       />
@@ -398,7 +433,7 @@ function App() {
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-1">
                       <SavingsProgress
-                        current={dashboardData.savings}
+                        current={dashboardData.availableBalance}
                         goal={dashboardData.savingsGoal}
                       />
                     </div>

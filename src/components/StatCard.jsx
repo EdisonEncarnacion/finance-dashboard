@@ -45,7 +45,9 @@ export function StatCard({
     title: propTitle,
     icon: propIcon,
     trend: propTrend,
-    trendUp: propTrendUp
+    trendUp: propTrendUp,
+    subtitle,
+    progress
 }) {
     // Determine data source: either from props or from type-based lookup
     const typeData = type ? icons[type] : null;
@@ -61,9 +63,9 @@ export function StatCard({
     const amount = value !== undefined ? value : (mockData ? mockData.amount : formatCurrency(0));
 
     return (
-        <div className="bg-[var(--color-card-bg)] rounded-3xl p-6 border border-[var(--color-border-dark)] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">
-            {/* Decorative gradient blob */}
-            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gradient-to-br from-white/5 to-transparent rounded-full blur-2xl group-hover:bg-white/10 transition-colors"></div>
+        <div className="bg-[var(--color-card-bg)] p-6 rounded-2xl border border-[var(--color-border-dark)] hover:border-slate-500 transition-all hover:shadow-lg relative overflow-hidden group flex flex-col justify-between h-full min-h-[110px]">
+            {/* Decorative background glow similar to IncomeStatCard */}
+            <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors pointer-events-none"></div>
 
             <div className="flex justify-between items-start mb-4 relative z-10">
                 <div className={cn("p-3 rounded-2xl", bg)}>
@@ -71,7 +73,7 @@ export function StatCard({
                 </div>
                 {trend && (
                     <div className={cn(
-                        "flex items-center space-x-1 text-sm font-medium px-2 py-1 rounded-full transition-colors duration-300",
+                        "flex items-center space-x-1 text-sm font-medium px-2 py-1 rounded-full transition-colors",
                         trendUp ? "text-emerald-400 bg-emerald-400/10" : "text-orange-400 bg-orange-400/10"
                     )}>
                         {trendUp ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
@@ -80,9 +82,22 @@ export function StatCard({
                 )}
             </div>
 
-            <div className="space-y-1 relative z-10 overflow-hidden">
-                <p className="text-slate-400 text-sm font-medium transition-all duration-300 transform">{title}</p>
-                <h3 className="text-3xl font-bold text-white tracking-tight transition-all duration-500 transform">{amount}</h3>
+            <div className="relative z-10 flex flex-col">
+                <p className="text-slate-400 text-sm font-medium">{title}</p>
+                <h3 className="text-3xl font-bold text-white tracking-tight">{amount}</h3>
+                {subtitle && <p className="text-slate-400 text-xs mt-1">{subtitle}</p>}
+
+                {progress !== undefined && progress !== null && (
+                    <div className="w-full h-1.5 bg-slate-800 rounded-full mt-4 overflow-hidden relative transition-all">
+                        <div
+                            className={cn(
+                                "h-full rounded-full transition-all duration-500",
+                                progress < 30 ? "bg-red-500" : progress <= 70 ? "bg-yellow-500" : "bg-green-500"
+                            )}
+                            style={{ width: `${Math.min(progress, 100)}%` }}
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );
