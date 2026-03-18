@@ -1,5 +1,6 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { formatCurrency } from '../utils/formatters';
 
 export function SavingsProgress({ dateFilter = 'mes', current, goal }) {
     const savingsData = {
@@ -57,7 +58,7 @@ export function SavingsProgress({ dateFilter = 'mes', current, goal }) {
 
             <div className="mt-4 text-center">
                 <p className="text-[#94a3b8] text-sm">
-                    <span className="text-white font-bold">S/ {currentSavings.toLocaleString()}</span> ahorrados de S/ {savingsGoal.toLocaleString()}
+                    <span className="text-white font-bold">{formatCurrency(currentSavings)}</span> ahorrados de {formatCurrency(savingsGoal)}
                 </p>
             </div>
 

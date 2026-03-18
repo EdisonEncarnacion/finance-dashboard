@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { cn } from './Sidebar';
 import { useNavigate } from 'react-router-dom';
+import { formatCurrency } from '../utils/formatters';
 
 const transactions = [
     { id: 1, date: '15 Mar, 2024', category: 'Comida', desc: 'Supermercado Metro', amount: 'S/ 120.00', type: 'gasto' },
@@ -73,7 +74,7 @@ export function TransactionsTable({ transactions: propTransactions }) {
                                     {tx.desc || tx.description}
                                 </td>
                                 <td className="py-4 px-2 text-sm text-white font-bold whitespace-nowrap">
-                                    {typeof tx.amount === 'number' ? `S/ ${tx.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}` : tx.amount}
+                                    {formatCurrency(tx.amount)}
                                 </td>
                                 <td className="py-4 px-2 text-right">
                                     <div className={cn(

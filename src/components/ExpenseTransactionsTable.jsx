@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { formatCurrency } from '../utils/formatters';
 
 export function ExpenseTransactionsTable({ transactions = [] }) {
     const [showAll, setShowAll] = useState(false);
@@ -43,7 +44,7 @@ export function ExpenseTransactionsTable({ transactions = [] }) {
                                 <td className="px-6 py-5 whitespace-nowrap font-medium text-white">{tx.category}</td>
                                 <td className="px-6 py-5">{tx.description}</td>
                                 <td className="px-6 py-5 whitespace-nowrap text-right font-bold text-red-400">
-                                    S/ {Number(tx.amount).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                    {formatCurrency(tx.amount)}
                                 </td>
                                 <td className="px-6 py-5 whitespace-nowrap text-center">
                                     <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-500">

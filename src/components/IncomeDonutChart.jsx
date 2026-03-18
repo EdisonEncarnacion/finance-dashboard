@@ -1,7 +1,15 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { formatCurrency } from '../utils/formatters';
 
 export function IncomeDonutChart({ data: rawData = [] }) {
+    if (!rawData || !rawData.length) {
+        return (
+            <div className="bg-[var(--color-card-bg)] p-6 rounded-2xl border border-[var(--color-border-dark)] h-full flex flex-col relative overflow-hidden group hover:border-slate-500 transition-colors items-center justify-center min-h-[250px]">
+                <p className="text-slate-400">No hay datos de ingresos para mostrar</p>
+            </div>
+        );
+    }
     const totalAmount = rawData.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
 
     // Group by source
@@ -63,7 +71,7 @@ export function IncomeDonutChart({ data: rawData = [] }) {
                 {/* Center text */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none -mt-4">
                     <span className="text-xs text-slate-400 font-semibold tracking-wider">TOTAL</span>
-                    <span className="text-2xl font-bold text-white tracking-tight mt-1">S/ {total.toLocaleString()}</span>
+                    <span className="text-2xl font-bold text-white tracking-tight mt-1">{formatCurrency(total)}</span>
                 </div>
             </div>
 

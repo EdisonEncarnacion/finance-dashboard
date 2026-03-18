@@ -1,6 +1,8 @@
 import React from 'react';
 import { cn } from './Sidebar';
 import { TrendingUp, TrendingDown, Target, Wallet } from 'lucide-react';
+import { formatCurrency } from '../utils/formatters';
+
 
 const icons = {
     income: { icon: Wallet, color: 'text-emerald-400', bg: 'bg-emerald-400/10' },
@@ -56,7 +58,7 @@ export function StatCard({
     const title = propTitle || (mockData ? mockData.title : 'Estadística');
     const trend = propTrend !== undefined ? propTrend : (mockData ? mockData.trend : null);
     const trendUp = propTrendUp !== undefined ? propTrendUp : (mockData ? mockData.trendUp : true);
-    const amount = value !== undefined ? value : (mockData ? mockData.amount : 'S/ 0');
+    const amount = value !== undefined ? value : (mockData ? mockData.amount : formatCurrency(0));
 
     return (
         <div className="bg-[var(--color-card-bg)] rounded-3xl p-6 border border-[var(--color-border-dark)] shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden group">

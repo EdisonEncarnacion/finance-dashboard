@@ -2,8 +2,16 @@ import React, { useState, useMemo } from 'react';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { cn } from './Sidebar';
 
-export function IncomeChart({ data: rawData = [] }) {
+export function IncomeChart({ data: rawData = [], total, growth }) {
     const [activeFilter, setActiveFilter] = useState('ESTE MES');
+
+    if (!rawData || !rawData.length) {
+        return (
+            <div className="bg-[var(--color-card-bg)] p-6 rounded-2xl border border-[var(--color-border-dark)] h-full flex items-center justify-center min-h-[300px]">
+                <p className="text-slate-400">No hay datos para mostrar</p>
+            </div>
+        );
+    }
 
     const aggregatedData = useMemo(() => {
         const now = new Date();

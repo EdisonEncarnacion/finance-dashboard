@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import { getExpenses, getIncomes } from './api/api';
+import { formatCurrency } from './utils/formatters';
 import { Sidebar } from './components/Sidebar';
 import { Topbar } from './components/Topbar';
 import { BottomNav } from './components/BottomNav';
@@ -225,7 +226,7 @@ function App() {
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <ExpenseStatCard
                         title="Gasto total del mes"
-                        amount={`S/ ${expenseStats.totalMonthlyExpenses.toLocaleString()}`}
+                        amount={formatCurrency(expenseStats.totalMonthlyExpenses)}
                         trend="+8%"
                         trendUp={false}
                       />
@@ -233,7 +234,7 @@ function App() {
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <ExpenseStatCard
                         title="Gasto promedio diario"
-                        amount={`S/ ${expenseStats.dailyAverage.toFixed(0)}`}
+                        amount={formatCurrency(expenseStats.dailyAverage)}
                         trend="0%"
                         trendUp={true}
                       />
@@ -251,7 +252,7 @@ function App() {
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <ExpenseStatCard
                         title="Meta de ahorro"
-                        amount="S/ 1,000"
+                        amount={formatCurrency(1000)}
                         trend="+12%"
                         trendUp={true}
                         isLargeValue={false}
@@ -290,7 +291,7 @@ function App() {
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <IncomeStatCard
                         title="Ingreso total del mes"
-                        amount={`S/ ${incomeStats.totalMonthlyIncome.toLocaleString()}`}
+                        amount={formatCurrency(incomeStats.totalMonthlyIncome)}
                         trend={`+${incomeStats.growth}%`}
                         trendUp={incomeStats.growth >= 0}
                       />
@@ -298,7 +299,7 @@ function App() {
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <IncomeStatCard
                         title="Ingreso promedio semanal"
-                        amount={`S/ ${incomeStats.weeklyAverage.toLocaleString()}`}
+                        amount={formatCurrency(incomeStats.weeklyAverage)}
                         trend="Estable"
                         trendUp={true}
                         subtitle=""
@@ -326,8 +327,8 @@ function App() {
                   <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-2">
                       <IncomeChart
-                        data={incomes}
-                        total={`S/ ${incomeStats.totalMonthlyIncome.toLocaleString()}`}
+                        data={incomes || []}
+                        total={formatCurrency(incomeStats.totalMonthlyIncome)}
                         growth={`${incomeStats.growth}%`}
                       />
                     </div>
@@ -351,7 +352,7 @@ function App() {
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <StatCard
                         title="Ingreso mensual"
-                        value={`S/ ${dashboardData.totalIncome.toLocaleString()}`}
+                        value={formatCurrency(dashboardData.totalIncome)}
                         trend="+5%"
                         trendUp={true}
                         icon={TrendingUp}
@@ -360,7 +361,7 @@ function App() {
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <StatCard
                         title="Gastos del mes"
-                        value={`S/ ${dashboardData.totalExpenses.toLocaleString()}`}
+                        value={formatCurrency(dashboardData.totalExpenses)}
                         trend="-2%"
                         trendUp={false}
                         icon={TrendingDown}
@@ -369,7 +370,7 @@ function App() {
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <StatCard
                         title="Meta de ahorro"
-                        value={`S/ ${dashboardData.savingsGoal.toLocaleString()}`}
+                        value={formatCurrency(dashboardData.savingsGoal)}
                         trend="Objetivo"
                         trendUp={true}
                         icon={Target}
@@ -378,7 +379,7 @@ function App() {
                     <div className="min-w-[280px] flex-shrink-0 snap-center md:min-w-0">
                       <StatCard
                         title="Ahorro actual"
-                        value={`S/ ${dashboardData.savings.toLocaleString()}`}
+                        value={formatCurrency(dashboardData.savings)}
                         trend="+12%"
                         trendUp={true}
                         icon={Wallet}
