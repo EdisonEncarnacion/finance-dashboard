@@ -7,6 +7,7 @@ import {
     ResponsiveContainer,
     CartesianGrid
 } from 'recharts';
+import { formatCurrency } from '../utils/formatters';
 
 export function CashFlowChart({ incomes = [], expenses = [], activeFilter = 'ESTE MES' }) {
 
@@ -104,11 +105,11 @@ export function CashFlowChart({ incomes = [], expenses = [], activeFilter = 'EST
                     <div className="space-y-2">
                         <div className="flex items-center justify-between gap-8">
                             <span className="text-blue-400 text-xs font-semibold">Ingresos</span>
-                            <span className="text-white font-bold">S/ {payload[1]?.value.toLocaleString() || 0}</span>
+                            <span className="text-white font-bold">{formatCurrency(payload[1]?.value)}</span>
                         </div>
                         <div className="flex items-center justify-between gap-8">
                             <span className="text-slate-400 text-xs font-semibold">Gastos</span>
-                            <span className="text-slate-200 font-bold">S/ {payload[0]?.value.toLocaleString() || 0}</span>
+                            <span className="text-slate-200 font-bold">{formatCurrency(payload[0]?.value)}</span>
                         </div>
                     </div>
                 </div>

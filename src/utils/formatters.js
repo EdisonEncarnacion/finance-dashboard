@@ -6,9 +6,9 @@
  * @returns {string} Formatted currency string
  */
 export function formatCurrency(value) {
-    const numericValue = Number(value || 0);
-    return `S/ ${numericValue.toLocaleString('en-US', {
-        minimumFractionDigits: 2,
+    const number = Number(value || 0);
+    return `S/ ${number.toLocaleString('es-PE', {
+        minimumFractionDigits: number % 1 === 0 ? 0 : 2,
         maximumFractionDigits: 2
     })}`;
 }

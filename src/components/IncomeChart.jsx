@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { AreaChart, Area, XAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { cn } from './Sidebar';
+import { formatCurrency } from '../utils/formatters';
 
 export function IncomeChart({ data: rawData = [], total, growth }) {
     const [activeFilter, setActiveFilter] = useState('ESTE MES');
@@ -16,9 +17,6 @@ export function IncomeChart({ data: rawData = [], total, growth }) {
     const aggregatedData = useMemo(() => {
         const now = new Date();
         const grouped = {};
-
-        // Helper to format currency
-        const formatCurrency = (val) => `S/ ${val.toLocaleString()}`;
 
         // Initialize groups based on filter to ensure all points are visible
         if (activeFilter === 'HOY') {
@@ -101,7 +99,7 @@ export function IncomeChart({ data: rawData = [], total, growth }) {
             return (
                 <div className="bg-[#0F172A]/90 backdrop-blur-md border border-slate-700/50 p-3 rounded-xl shadow-2xl ring-1 ring-white/10">
                     <p className="text-white font-bold text-lg tracking-tight">
-                        S/ {payload[0].value.toLocaleString()}
+                        {formatCurrency(payload[0].value)}
                     </p>
                     <p className="text-slate-400 text-xs font-semibold uppercase tracking-wider mt-0.5">
                         {getLabel()}
