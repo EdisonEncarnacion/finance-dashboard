@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { ToastProvider } from './context/ToastContext';
 import { getExpenses, getIncomes } from './api/api';
-import { formatCurrency } from './utils/formatters';
+import { formatCurrency, formatDate } from './utils/formatters';
 import { Sidebar } from './components/Sidebar';
 import { Topbar } from './components/Topbar';
 import { BottomNav } from './components/BottomNav';
@@ -120,7 +120,7 @@ function App() {
     // Prepare CashFlowChart data (grouped by date)
     const dateMap = {};
     [...expenses, ...incomes].forEach(item => {
-      const dateKey = new Date(item.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+      const dateKey = formatDate(item.date, { day: 'numeric', month: 'short' });
       if (!dateMap[dateKey]) dateMap[dateKey] = { name: dateKey, ingresos: 0, gastos: 0 };
       if (expenses.includes(item)) {
         dateMap[dateKey].gastos += Number(item.amount);

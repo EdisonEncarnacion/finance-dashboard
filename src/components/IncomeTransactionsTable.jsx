@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { formatCurrency } from '../utils/formatters';
+import { formatCurrency, formatDate } from '../utils/formatters';
 import { Trash2 } from 'lucide-react';
 import { DeleteModal } from './DeleteModal';
 import { getCategoryColor } from '../utils/categoryColors';
@@ -70,7 +70,7 @@ export function IncomeTransactionsTable({ transactions = [], onDelete }) {
                         {displayTransactions.map((tx) => (
                             <tr key={tx.id} className="transition-colors group/row">
                                 <td className="px-6 py-5 whitespace-nowrap text-slate-400">
-                                    {tx.date ? new Date(tx.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : tx.date}
+                                    {tx.date ? formatDate(tx.date) : tx.date}
                                 </td>
                                 <td className="px-6 py-5 whitespace-nowrap">
                                     <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${getCategoryColor(tx.source || tx.category, 'ingreso').twClass}`}>

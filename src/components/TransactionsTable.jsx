@@ -2,7 +2,7 @@ import React from 'react';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { cn } from './Sidebar';
 import { useNavigate } from 'react-router-dom';
-import { formatCurrency } from '../utils/formatters';
+import { formatCurrency, formatDate } from '../utils/formatters';
 import { getCategoryColor } from '../utils/categoryColors';
 
 const transactions = [
@@ -51,7 +51,7 @@ export function TransactionsTable({ transactions: propTransactions }) {
                                 className="hover:bg-white/5 transition-all duration-200 group cursor-pointer active:scale-[0.99]"
                             >
                                 <td className="py-4 px-2 text-sm text-slate-300 font-medium whitespace-nowrap">
-                                    {tx.date ? new Date(tx.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : tx.date}
+                                    {tx.date ? formatDate(tx.date) : tx.date}
                                 </td>
                                 <td className="py-4 px-2">
                                     <span className={cn(

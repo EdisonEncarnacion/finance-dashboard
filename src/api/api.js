@@ -1,4 +1,5 @@
-const API_URL = "https://backend-finance-hu46.onrender.com";
+const API_URL = "http://localhost:3001";
+
 
 /**
  * Common fetch wrapper with error handling
@@ -47,7 +48,7 @@ export async function createExpense(data) {
 }
 
 export async function createIncome(data) {
-    const result = await safeFetch(`${API_URL}/incomes`, {
+    const result = await safeFetch(`${API_URL}/ incomes`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
