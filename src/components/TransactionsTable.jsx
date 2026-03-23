@@ -3,6 +3,7 @@ import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { cn } from './Sidebar';
 import { useNavigate } from 'react-router-dom';
 import { formatCurrency } from '../utils/formatters';
+import { getCategoryColor } from '../utils/categoryColors';
 
 const transactions = [
     { id: 1, date: '15 Mar, 2024', category: 'Comida', desc: 'Supermercado Metro', amount: 'S/ 120.00', type: 'gasto' },
@@ -11,17 +12,7 @@ const transactions = [
     { id: 4, date: '10 Mar, 2024', category: 'Transporte', desc: 'Gasolina', amount: 'S/ 80.00', type: 'gasto' },
 ];
 
-const categoryColors = {
-    'Comida': 'bg-blue-500/20 text-blue-400',
-    'Salario': 'bg-emerald-500/20 text-emerald-400',
-    'Servicios': 'bg-purple-500/20 text-purple-400',
-    'Transporte': 'bg-orange-500/20 text-orange-400',
-    'Freelance': 'bg-blue-500/20 text-blue-400',
-    'Inversiones': 'bg-indigo-500/20 text-indigo-400',
-    'Regalos': 'bg-amber-500/20 text-amber-400',
-    'Salud': 'bg-red-500/20 text-red-400',
-    'Entretenimiento': 'bg-pink-500/20 text-pink-400',
-};
+
 
 export function TransactionsTable({ transactions: propTransactions }) {
     const displayTransactions = propTransactions || transactions;
@@ -65,7 +56,7 @@ export function TransactionsTable({ transactions: propTransactions }) {
                                 <td className="py-4 px-2">
                                     <span className={cn(
                                         "px-3 py-1 rounded-full text-xs font-bold tracking-wide",
-                                        categoryColors[tx.category] || "bg-slate-500/20 text-slate-400"
+                                        getCategoryColor(tx.category, tx.type).twClass
                                     )}>
                                         {tx.category}
                                     </span>

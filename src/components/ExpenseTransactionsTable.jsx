@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { formatCurrency } from '../utils/formatters';
 import { Trash2 } from 'lucide-react';
 import { DeleteModal } from './DeleteModal';
+import { getCategoryColor } from '../utils/categoryColors';
 
 export function ExpenseTransactionsTable({ transactions = [], onDelete }) {
     const [showAll, setShowAll] = useState(false);
@@ -71,7 +72,11 @@ export function ExpenseTransactionsTable({ transactions = [], onDelete }) {
                                 <td className="px-6 py-5 whitespace-nowrap text-slate-400">
                                     {tx.date ? new Date(tx.date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' }) : tx.date}
                                 </td>
-                                <td className="px-6 py-5 whitespace-nowrap font-medium text-white">{tx.category}</td>
+                                <td className="px-6 py-5 whitespace-nowrap">
+                                    <span className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide ${getCategoryColor(tx.category, 'gasto').twClass}`}>
+                                        {tx.category}
+                                    </span>
+                                </td>
                                 <td className="px-6 py-5">{tx.description}</td>
                                 <td className="px-6 py-5 whitespace-nowrap text-right font-bold text-red-400">
                                     {formatCurrency(tx.amount)}

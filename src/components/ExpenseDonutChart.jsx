@@ -1,6 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { formatCurrency } from '../utils/formatters';
+import { getCategoryColor } from '../utils/categoryColors';
 
 export function ExpenseDonutChart({ data: rawData = [] }) {
     if (!rawData || !rawData.length) {
@@ -19,13 +20,15 @@ export function ExpenseDonutChart({ data: rawData = [] }) {
         return acc;
     }, {});
 
-    const colors = ['#EF4444', '#3B82F6', '#F59E0B', '#10B981', '#8B5CF6'];
-    const data = Object.keys(categoriesMap).map((name, index) => ({
-        name,
-        value: totalAmount > 0 ? Math.round((categoriesMap[name] / totalAmount) * 100) : 0,
-        amount: categoriesMap[name],
-        color: colors[index % colors.length]
-    }));
+    const data = Object.keys(categoriesMap).map((name) => {
+        const { hex } = getCategoryColor(name, 'gasto');
+        return {
+            name,
+            value: totalAmount > 0 ? Math.round((categoriesMap[name] / totalAmount) * 100) : 0,
+            amount: categoriesMap[name],
+            color: hex
+        };
+    });
     return (
         <div className="bg-[var(--color-card-bg)] p-6 rounded-2xl border border-[var(--color-border-dark)] h-full flex flex-col relative overflow-hidden group hover:border-slate-500 transition-colors">
             <div className="mb-2">

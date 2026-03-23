@@ -1,6 +1,7 @@
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { formatCurrency } from '../utils/formatters';
+import { getCategoryColor } from '../utils/categoryColors';
 
 export function IncomeDonutChart({ data: rawData = [] }) {
     if (!rawData || !rawData.length) {
@@ -19,13 +20,15 @@ export function IncomeDonutChart({ data: rawData = [] }) {
         return acc;
     }, {});
 
-    const colors = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444'];
-    const data = Object.keys(sourcesMap).map((name, index) => ({
-        name,
-        value: totalAmount > 0 ? Math.round((sourcesMap[name] / totalAmount) * 100) : 0,
-        amount: sourcesMap[name],
-        color: colors[index % colors.length]
-    }));
+    const data = Object.keys(sourcesMap).map((name) => {
+        const { hex } = getCategoryColor(name, 'ingreso');
+        return {
+            name,
+            value: totalAmount > 0 ? Math.round((sourcesMap[name] / totalAmount) * 100) : 0,
+            amount: sourcesMap[name],
+            color: hex
+        };
+    });
 
     const total = totalAmount;
 
