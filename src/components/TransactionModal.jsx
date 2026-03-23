@@ -117,17 +117,13 @@ export function TransactionModal({ isOpen, onClose, type, onSuccess }) {
                         {/* Date */}
                         <div className="space-y-2">
                             <label className="text-xs font-semibold text-slate-400 uppercase tracking-wider ml-1">Fecha</label>
-                            <div className="relative">
-                                <div className="hidden md:block absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 border-r border-slate-800 pr-4">
-                                    <Calendar size={18} />
-                                </div>
-                                <input
-                                    type="date"
-                                    className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl pl-4 md:pl-14 pr-5 py-3.5 text-slate-200 focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all"
-                                    value={formData.date}
-                                    onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                                />
-                            </div>
+                            <input
+                                type="date"
+                                className="w-full bg-slate-900/50 border border-slate-800 rounded-2xl px-4 py-3.5 text-slate-200 focus:outline-none focus:border-blue-500/50 focus:ring-4 focus:ring-blue-500/10 transition-all"
+                                value={formData.date}
+                                style={{ colorScheme: 'dark' }}
+                                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                            />
                         </div>
 
                         {/* Actions */}
