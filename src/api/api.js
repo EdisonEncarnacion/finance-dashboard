@@ -1,5 +1,4 @@
-const API_URL = "http://localhost:3001";
-
+const API_URL = "https://backend-finance-hu46.onrender.com";
 
 /**
  * Common fetch wrapper with error handling

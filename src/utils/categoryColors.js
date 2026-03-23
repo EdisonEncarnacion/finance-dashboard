@@ -1,22 +1,40 @@
-export const EXPENSE_COLORS = ['#EF4444', '#3B82F6', '#F59E0B', '#10B981', '#8B5CF6', '#06B6D4'];
-export const INCOME_COLORS = ['#10B981', '#3B82F6', '#8B5CF6', '#F59E0B', '#EF4444'];
-
-const HEX_TO_TW_CLASS = {
-    '#EF4444': 'bg-red-500/20 text-red-500',
-    '#3B82F6': 'bg-blue-500/20 text-blue-500',
-    '#F59E0B': 'bg-amber-500/20 text-amber-500',
-    '#10B981': 'bg-emerald-500/20 text-emerald-500',
-    '#8B5CF6': 'bg-purple-500/20 text-purple-500',
-    '#06B6D4': 'bg-cyan-500/20 text-cyan-500',
+// Fixed colors per expense category (hex + tailwind badge class)
+const EXPENSE_CATEGORY_COLORS = {
+    'Alimentación': { hex: '#06B6D4', twClass: 'bg-cyan-500/20 text-cyan-400' },
+    'Comida': { hex: '#06B6D4', twClass: 'bg-cyan-500/20 text-cyan-400' },
+    'Transporte': { hex: '#3B82F6', twClass: 'bg-blue-500/20 text-blue-400' },
+    'Entretenimiento': { hex: '#F59E0B', twClass: 'bg-amber-500/20 text-amber-400' },
+    'Servicios': { hex: '#3B82F6', twClass: 'bg-blue-500/20 text-blue-400' },
+    'Salud': { hex: '#8B5CF6', twClass: 'bg-purple-500/20 text-purple-400' },
+    'Otros': { hex: '#8B5CF6', twClass: 'bg-purple-500/20 text-purple-400' },
 };
 
-// Stable hash function for strings
+// Fixed colors per income source
+const INCOME_CATEGORY_COLORS = {
+    'Salario': { hex: '#10B981', twClass: 'bg-emerald-500/20 text-emerald-400' },
+    'Freelance': { hex: '#3B82F6', twClass: 'bg-blue-500/20 text-blue-400' },
+    'Inversiones': { hex: '#8B5CF6', twClass: 'bg-violet-500/20 text-violet-400' },
+    'Regalos': { hex: '#F59E0B', twClass: 'bg-amber-500/20 text-amber-400' },
+    'Otros': { hex: '#06B6D4', twClass: 'bg-cyan-500/20 text-cyan-400' },
+};
+
+// Fallback palette for unknown categories
+const FALLBACK_PALETTE = [
+    { hex: '#EF4444', twClass: 'bg-red-500/20 text-red-400' },
+    { hex: '#EC4899', twClass: 'bg-pink-500/20 text-pink-400' },
+    { hex: '#14B8A6', twClass: 'bg-teal-500/20 text-teal-400' },
+    { hex: '#84CC16', twClass: 'bg-lime-500/20 text-lime-400' },
+];
+
+// Colors for donut charts (in category order)
+export const EXPENSE_COLORS = Object.values(EXPENSE_CATEGORY_COLORS).map(c => c.hex);
+export const INCOME_COLORS = Object.values(INCOME_CATEGORY_COLORS).map(c => c.hex);
+
 function hashString(str) {
     let hash = 0;
     for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash; // Convert to 32bit integer
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash = hash & hash;
     }
     return Math.abs(hash);
 }
@@ -24,24 +42,10 @@ function hashString(str) {
 export function getCategoryColor(category, type = 'gasto') {
     const catStr = category || 'Otros';
     const isIncome = type === 'ingreso' || type === 'income';
-    const palette = isIncome ? INCOME_COLORS : EXPENSE_COLORS;
+    const map = isIncome ? INCOME_CATEGORY_COLORS : EXPENSE_CATEGORY_COLORS;
 
-    // Some hardcoded common categories to match current design exactly
-    const knownExpenses = { 'Alimentación': 5, 'Comida': 5, 'Transporte': 1, 'Entretenimiento': 2, 'Servicios': 3, 'Salud': 4 };
-    const knownIncomes = { 'Salario': 0, 'Freelance': 1, 'Inversiones': 2 };
+    if (map[catStr]) return map[catStr];
 
-    let index;
-    if (isIncome && knownIncomes[catStr] !== undefined) {
-        index = knownIncomes[catStr];
-    } else if (!isIncome && knownExpenses[catStr] !== undefined) {
-        index = knownExpenses[catStr];
-    } else {
-        index = hashString(catStr);
-    }
-
-    const hex = palette[index % palette.length];
-    return {
-        hex,
-        twClass: HEX_TO_TW_CLASS[hex] || 'bg-slate-500/20 text-slate-400'
-    };
+    // Unknown category: pick a fallback by hash
+    return FALLBACK_PALETTE[hashString(catStr) % FALLBACK_PALETTE.length];
 }
