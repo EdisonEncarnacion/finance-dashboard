@@ -6,16 +6,9 @@ import { formatCurrency } from '../utils/formatters';
 export function ExpenseChart({ data: rawData = [] }) {
     const [activeFilter, setActiveFilter] = useState('ESTE MES');
 
-    if (!rawData || !rawData.length) {
-        return (
-            <div className="bg-[var(--color-card-bg)] p-6 rounded-2xl border border-[var(--color-border-dark)] h-full flex items-center justify-center min-h-[300px]">
-                <p className="text-slate-400">No hay datos para mostrar</p>
-            </div>
-        );
-    }
-
 
     const aggregatedData = useMemo(() => {
+        if (!rawData || !rawData.length) return [];
         const now = new Date();
         const grouped = {};
 
@@ -77,6 +70,15 @@ export function ExpenseChart({ data: rawData = [] }) {
 
         return Object.entries(grouped).map(([name, value]) => ({ name, value }));
     }, [rawData, activeFilter]);
+
+    if (!rawData || !rawData.length) {
+        return (
+            <div className="bg-[var(--color-card-bg)] p-6 rounded-2xl border border-[var(--color-border-dark)] h-full flex items-center justify-center min-h-[300px]">
+                <p className="text-slate-400">No hay datos para mostrar</p>
+            </div>
+        );
+    }
+
 
     const getTicks = () => {
         if (activeFilter === 'HOY') return ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'];

@@ -11,15 +11,9 @@ import { formatCurrency } from '../utils/formatters';
 
 export function CashFlowChart({ incomes = [], expenses = [], activeFilter = 'ESTE MES' }) {
 
-    if ((!incomes || incomes.length === 0) && (!expenses || expenses.length === 0)) {
-        return (
-            <div className="bg-[var(--color-card-bg)] rounded-3xl p-6 border border-[var(--color-border-dark)] h-full flex items-center justify-center min-h-[220px] col-span-1 md:col-span-2">
-                <p className="text-slate-400">No hay datos de flujo de dinero para mostrar</p>
-            </div>
-        );
-    }
 
     const aggregatedData = useMemo(() => {
+        if ((!incomes || incomes.length === 0) && (!expenses || expenses.length === 0)) return [];
         const now = new Date();
         const grouped = {};
 
@@ -83,6 +77,15 @@ export function CashFlowChart({ incomes = [], expenses = [], activeFilter = 'EST
 
         return Object.entries(grouped).map(([name, values]) => ({ name, ...values }));
     }, [incomes, expenses, activeFilter]);
+
+    if ((!incomes || incomes.length === 0) && (!expenses || expenses.length === 0)) {
+        return (
+            <div className="bg-[var(--color-card-bg)] rounded-3xl p-6 border border-[var(--color-border-dark)] h-full flex items-center justify-center min-h-[220px] col-span-1 md:col-span-2">
+                <p className="text-slate-400">No hay datos de flujo de dinero para mostrar</p>
+            </div>
+        );
+    }
+
 
     const getTicks = () => {
         const filter = activeFilter.toUpperCase();
